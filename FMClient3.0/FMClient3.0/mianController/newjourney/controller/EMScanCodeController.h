@@ -15,7 +15,5 @@
 }
 @property (retain, nonatomic) ZBarReaderView *readerView;
 @property (nonatomic, assign) NSUInteger scanMode;
-@property (weak, nonatomic) IBOutlet UIView *BGview;
-@property (weak, nonatomic) IBOutlet UIImageView *scanView;
 
 @end
