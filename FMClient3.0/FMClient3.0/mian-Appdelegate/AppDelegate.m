@@ -11,6 +11,7 @@
 #import "FMAddInfoController.h"
 #import "MYUtils.h"
 #import "FMLocationManager.h"
+#import "LoginViewController.h"
 #define BAIDUKEY @"uGIwfMfh0s5bEB1dqLGW5GtAji7QGa4D"
 @interface AppDelegate ()
 
@@ -24,37 +25,62 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
 //    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:YES];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(loginStateChange)
+                                                 name:@"KNOTIFICATION_LOGINCHANGE"
+                                               object:nil];
     //设置Window主界面
     [self configRootViewController];
     
     [self initAppMap];
     //开始定位
-    [[FMLocationManager sharedManager]startLocationService];
+//    [[FMLocationManager sharedManager]startLocationService];
     
     
     return YES;
     
 }
+-(void)loginStateChange{
+    MYMaintabcontroller * tabController = [[MYMaintabcontroller alloc] init];
+    
+    //    NSString * isShow = [[NSUserDefaults standardUserDefaults] objectForKey:kShowWelcome];
+    //    if(![MYUtils isEmpty:isShow])
+    //    {
+    //        FMAddInfoController * addCtrl = [[FMAddInfoController alloc]init];
+    //       self.window.rootViewController = addCtrl;
+    
+    //    }else{
+    //
+    //        //设置windows根视
+    self.window.rootViewController = tabController;
+
+}
 #pragma mark -----  显示主界面  --------
 -(void)configRootViewController
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
-    //显示主界面
-    MYMaintabcontroller * tabController = [[MYMaintabcontroller alloc] init];
-    
-//    NSString * isShow = [[NSUserDefaults standardUserDefaults] objectForKey:kShowWelcome];
-//    if(![MYUtils isEmpty:isShow])
-//    {
-//        FMAddInfoController * addCtrl = [[FMAddInfoController alloc]init];
-//       self.window.rootViewController = addCtrl;
-    
-//    }else{
-//        
-//        //设置windows根视
+    NSString* token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
+    if (token.length>0) {
+        //显示主界面
+        MYMaintabcontroller * tabController = [[MYMaintabcontroller alloc] init];
+        
+        //    NSString * isShow = [[NSUserDefaults standardUserDefaults] objectForKey:kShowWelcome];
+        //    if(![MYUtils isEmpty:isShow])
+        //    {
+        //        FMAddInfoController * addCtrl = [[FMAddInfoController alloc]init];
+        //       self.window.rootViewController = addCtrl;
+        
+        //    }else{
+        //
+        //        //设置windows根视
         self.window.rootViewController = tabController;
-//    }
+        //    }
+
+    }else{
+        LoginViewController *loginVC=[[LoginViewController alloc] init];
+        loginVC.title = @"hrapp";
+        self.window.rootViewController=[[UINavigationController alloc] initWithRootViewController:loginVC];
+    }
     
 
     self.window.backgroundColor    = [UIColor whiteColor];

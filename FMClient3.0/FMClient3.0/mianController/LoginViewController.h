@@ -1,13 +1,13 @@
 //
-//  LoginViewController.h
-//  FMClient3.0
+//  LogonViewController.h
+//  HRProject
 //
-//  Created by YT on 16/9/1.
-//  Copyright © 2016年 YT.com. All rights reserved.
+//  Created by 王万意 on 16/9/16.
+//  Copyright © 2016年 Bstcine. All rights reserved.
 //
 
-#import "MYBaseController.h"
+#import <UIKit/UIKit.h>
 
-@interface LoginViewController : MYBaseController
+@interface LoginViewController : UIViewController
 
 @end
