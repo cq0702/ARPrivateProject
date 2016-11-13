@@ -227,13 +227,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "FMClient3.0/utils/FMLocationManager.m"
-            timestampString = "500378983.207399"
+            filePath = "FMClient3.0/mianController/newjourney/controller/EMScanCodeController.m"
+            timestampString = "500545944.363837"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
-            landmarkName = "-didUpdateBMKUserLocation:"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
+            landmarkName = "-handlePan:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
