@@ -43,20 +43,26 @@
 {
     self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(100, 100, 200, 400)];
     [self.readerView addSubview:self.targetImage];
+    self.targetImage.clipsToBounds = YES;
+    self.targetImage.contentMode = UIViewContentModeCenter;
     
-    self.targetImage.image = [UIImage imageNamed:@"imageTest22.png"];
+    self.targetImage.image = [UIImage imageNamed:@"imageTest.png"];
     CATransform3D transform = CATransform3DIdentity;
     transform.m34 = -1/500.0;
     self.targetImage.layer.transform = transform;
     
     
-    CATransform3D translateForm = CATransform3DTranslate(transform, 0, 0, 50);
-//
-    CATransform3D rotationForm  = CATransform3DRotate(transform, 30*M_PI/180, 0, 1, 0);
-//
-    CATransform3D contactForm  = CATransform3DConcat(translateForm, rotationForm);
+    CATransform3D translateForm = CATransform3DTranslate(transform, 0, 0, 1);
+    CATransform3D scalForm = CATransform3DScale(transform, 0.5, 0.5, 1);
     
-    self.targetImage.layer.transform = contactForm;
+//
+//    CATransform3D rotationForm  = CATransform3DRotate(transform, 60*M_PI/180, 1, 0, 0);
+    CATransform3D rotationForm  = CATransform3DMakeRotation(60*M_PI/180, 1, 1, 0);
+    
+//
+    CATransform3D contactForm  = CATransform3DConcat(scalForm, rotationForm);
+    
+    self.targetImage.layer.transform = rotationForm;
     
 //    [self targetImageAction];
     

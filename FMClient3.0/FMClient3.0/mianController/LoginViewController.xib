@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -98,6 +98,7 @@
                     <constraints>
                         <constraint firstAttribute="height" constant="40" id="WpQ-jz-5Ov"/>
                     </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <state key="normal" title="登录" backgroundImage="登录按钮.png">
                         <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
@@ -105,7 +106,7 @@
                         <action selector="loginAction:" destination="-1" eventType="touchUpInside" id="WRh-6X-z18"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="淳安杭燃燃气有限公司智能巡线信息管理系统" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BGn-YA-vM5">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AR APP" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BGn-YA-vM5">
                     <rect key="frame" x="0.0" y="190" width="375" height="18"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="18" id="0W2-PE-Nvg"/>
@@ -114,7 +115,7 @@
                     <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="上海奥联能源科技有限公司出品" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wUg-sm-Rx5">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wUg-sm-Rx5">
                     <rect key="frame" x="0.0" y="625" width="375" height="21"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="THI-sA-qTt"/>
@@ -129,7 +130,7 @@
                         <constraint firstAttribute="height" constant="21" id="v5l-1P-iqh"/>
                         <constraint firstAttribute="width" constant="95" id="ylE-cy-Koc"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <nil key="highlightedColor"/>
                 </label>
@@ -139,7 +140,7 @@
                         <constraint firstAttribute="height" constant="40" id="738-lR-5vL"/>
                         <constraint firstAttribute="width" constant="80" id="tfY-nY-qdp"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
                     <state key="normal" title="立即注册"/>
                     <connections>
                         <action selector="registerAction:" destination="-1" eventType="touchUpInside" id="LpL-0f-JhJ"/>
@@ -192,7 +193,7 @@
                 <constraint firstItem="2lI-Y7-Lc6" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="60" id="woZ-SK-2pz"/>
                 <constraint firstItem="rp5-4R-jyf" firstAttribute="top" secondItem="rhp-fG-OLC" secondAttribute="bottom" constant="10" id="yLn-t4-PqI"/>
             </constraints>
-            <point key="canvasLocation" x="150.5" y="248.5"/>
+            <point key="canvasLocation" x="-88" y="117"/>
         </view>
     </objects>
     <resources>
