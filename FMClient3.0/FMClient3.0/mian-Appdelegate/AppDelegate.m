@@ -34,7 +34,7 @@
     
     [self initAppMap];
     //开始定位
-//    [[FMLocationManager sharedManager]startLocationService];
+    [[FMLocationManager sharedManager]startLocationService];
     
     
     return YES;

@@ -5,23 +5,15 @@
 //  Created by YT on 15/11/25.
 //  Copyright © 2015年 FM. All rights reserved.
 //
-CATransform3D CATransform3DMakePerspective(CGPoint center, float disZ)
-{
-    CATransform3D transToCenter = CATransform3DMakeTranslation(-center.x, -center.y, 0);
-    CATransform3D transBack = CATransform3DMakeTranslation(center.x, center.y, 0);
-    CATransform3D scale = CATransform3DIdentity;
-    scale.m34 = -1.0f/disZ;
-    return CATransform3DConcat(CATransform3DConcat(transToCenter, scale), transBack);
-}
 
-CATransform3D CATransform3DPerspect(CATransform3D t, CGPoint center, float disZ)
-{
-    return CATransform3DConcat(t, CATransform3DMakePerspective(center, disZ));
-}
 
 #import "EMScanCodeController.h"
+#import "CATransform3DPerspect.h"
+#import <CoreLocation/CoreLocation.h>
+#import "FMLocationManager.h"
 
-@interface EMScanCodeController ()<CAAnimationDelegate>
+
+@interface EMScanCodeController ()<CAAnimationDelegate,CLLocationManagerDelegate>
 
 @property(nonatomic,strong)UIImageView * scanZomeBack;
 @property(nonatomic,strong)UIImageView * readLineView;
@@ -31,6 +23,8 @@ CATransform3D CATransform3DPerspect(CATransform3D t, CGPoint center, float disZ)
 @property (nonatomic,strong)UIImageView * hammerImage;
 
 
+@property (nonatomic,strong)CLLocationManager * locationManager;
+
 @end
 
 @implementation EMScanCodeController
@@ -38,22 +32,54 @@ CATransform3D CATransform3DPerspect(CATransform3D t, CGPoint center, float disZ)
 - (void)viewDidLoad {
     [super viewDidLoad];
 //    [self initNavBar];
-    self.view.backgroundColor = [UIColor redColor];
+    self.view.backgroundColor = [UIColor whiteColor];
     
     [self InitScan];
     
+    [self startUpdatesHeading];
+    
+    
     //取消扫描动画
-    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(update) userInfo:nil repeats:YES];
+    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(eggScalAnimation) userInfo:nil repeats:YES];
     
     [self addSubViews];
     
-//    [self update];
+    [self addEggSubViews];
     
 //    [self animationDaDaLogo];
     
 }
-
-
+-(void)addEggSubViews
+{
+    self.eggImage = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"eggimage33.png"]];
+    self.eggImage.frame = CGRectMake((SCREEN_WIDTH - 240)/2, SCREEN_HEIGHT - 349, 240, 350);
+    
+    [self.view addSubview: self.eggImage];
+    
+    
+    ////沿着X,Y轴旋转
+//        CATransform3D rotate = CATransform3DMakeRotation(M_PI/9, 0.3, 0, 0);
+//        self.eggImage.layer.transform = CATransform3DPerspect(rotate, CGPointMake(0, 0), 200);
+    
+    
+    
+    
+}
+-(void)eggScalAnimation
+{
+    static float angle = 0;
+    angle += 0.05f;
+    
+    if (angle < 0.8) {
+        
+        CATransform3D transloate = CATransform3DMakeTranslation(0, 0, 0.000000000001);
+        CATransform3D rotate = CATransform3DMakeScale(angle, angle, 1);
+        CATransform3D rotation = CATransform3DMakeRotation(angle, 0.1, 0, 0);
+        
+        CATransform3D mat = CATransform3DConcat(rotation, rotate);
+        self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 0), 1000);
+    }
+}
 -(void)addSubViews
 {
     self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(100, 100, 100, 200)];
@@ -67,12 +93,25 @@ CATransform3D CATransform3DPerspect(CATransform3D t, CGPoint center, float disZ)
     self.targetImage.layer.transform = transform;
     
     
+//    CATransform3D translateForm = CATransform3DTranslate(transform, 0, 0, 1);
+//    CATransform3D scalForm = CATransform3DScale(transform, 0.5, 0.5, 1);
+//    
+////    CATransform3D rotationForm  = CATransform3DRotate(transform, 60*M_PI/180, 1, 0, 0);
+//    CATransform3D rotationForm  = CATransform3DMakeRotation(M_PI_2/2, 1, 0, 0);
+//    
+//
+//    CATransform3D contactForm  = CATransform3DConcat(scalForm, rotationForm);
+//    
+//    self.targetImage.layer.transform = rotationForm;
+    
+    
     ////沿着X,Y轴旋转
 //    CATransform3D rotate = CATransform3DMakeRotation(M_PI/6, 0, 1, 0);
 //    self.targetImage.layer.transform = CATransform3DPerspect(rotate, CGPointMake(0, 100), 200);
     
 //    [self targetImageAction];
     
+    [self update];
     
     //蒙板
 //    UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
@@ -98,17 +137,15 @@ CATransform3D CATransform3DPerspect(CATransform3D t, CGPoint center, float disZ)
    
     
 }
-
-//旋转动画
 - (void)update
 {
     static float angle = 0;
-    angle += 0.1f;
+    angle += 0.05f;
     
-    CATransform3D transloate = CATransform3DMakeTranslation(0, 0, -200);
-    CATransform3D rotate = CATransform3DMakeRotation(angle, 0, 1, 0);
+    CATransform3D transloate = CATransform3DMakeTranslation(0, 0, 1);
+    CATransform3D rotate = CATransform3DMakeRotation(M_PI_2/2, 1, 0, 0);
     CATransform3D mat = CATransform3DConcat(rotate, transloate);
-    self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 0), 1000);
+    self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 10), 1000);
 }
 //拖动方法
 -(void)handlePan:(UIPanGestureRecognizer*) recognizer
@@ -117,7 +154,6 @@ CATransform3D CATransform3DPerspect(CATransform3D t, CGPoint center, float disZ)
     recognizer.view.center = CGPointMake(recognizer.view.center.x + translation.x,
                                          recognizer.view.center.y + translation.y);
     [recognizer setTranslation:CGPointZero inView:self.view];
-    
 }
 -(void)handlePinch:(UIPinchGestureRecognizer *)recognizer
 {
@@ -256,6 +292,77 @@ CATransform3D CATransform3DPerspect(CATransform3D t, CGPoint center, float disZ)
 //    [self ConfignavigationItemWith:NO];
     
      self.navigationController.navigationBarHidden = NO;
+}
+
+- (void)startUpdatesHeading
+{
+    
+    if ([CLLocationManager headingAvailable]) {
+        //创建显示方向的指南针Layer
+        CALayer * znzLayer = [[CALayer alloc]init];
+        NSInteger screenHeight = [UIScreen mainScreen].bounds.size.height;
+        NSInteger screenWidth = [UIScreen mainScreen].bounds.size.width;
+        NSInteger y = (screenHeight - 320)/2;
+        NSInteger x = (screenWidth - 320)/2;
+        znzLayer.frame = CGRectMake(x, y, 320, 320);
+        //设置znzLayer显示的照片
+        znzLayer.contents = (id)[[UIImage imageNamed:@"znz.png"]CGImage];
+        //将znzLayer添加刀系统的UIView中
+        [self.view.layer addSublayer:znzLayer];
+        //创建CLLocationManager对象
+        self.locationManager = [[CLLocationManager alloc]init];
+        self.locationManager.delegate = self;
+        [self.locationManager startUpdatingHeading];
+    }else{
+        //如果磁力计不可用告知
+        NSLog(@"设备不支持磁力计");
+    }
+    
+}
+
+
+// Delegate method from the CLLocationManagerDelegate protocol.
+- (void)locationManager:(CLLocationManager *)manager
+    didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation
+{
+    // If it's a relatively recent event, turn off updates to save power
+    NSDate* eventDate = newLocation.timestamp;
+    NSTimeInterval howRecent = [eventDate timeIntervalSinceNow];
+    if (fabs(howRecent) < 5.0)
+    {
+        [manager stopUpdatingLocation];
+        
+        printf("latitude %+.6f, longitude %+.6f\n",
+               newLocation.coordinate.latitude,
+               newLocation.coordinate.longitude);
+    }
+    // else skip the event and process the next one.
+}
+
+- (void)locationManager:(CLLocationManager*)manager didUpdateHeading:(CLHeading*)newHeading
+{
+    // If the accuracy is valid, go ahead and process the event.
+    if (newHeading.headingAccuracy > 0)
+    {
+        CLLocationDirection theHeading = newHeading.magneticHeading;
+        double d = 360 - theHeading;
+        
+        float direction = theHeading;
+        
+        NSLog(@"startUpdatesHeading ：%lf==== %lf",d,direction);
+        // Do something with the event data.
+        
+       double lng = [FMLocationManager sharedManager].currentLocation.location.coordinate.longitude;
+       double lat = [FMLocationManager sharedManager].currentLocation.location.coordinate.latitude;
+        
+        NSString *lngStr = [NSString stringWithFormat:@"%0.6f",lng];
+        NSString *latStr = [NSString stringWithFormat:@"%0.6f",lat];
+
+//     121.423552,31.203586  31.16946672086699  121.4102669075268
+        
+        
+    }
 }
 
 @end

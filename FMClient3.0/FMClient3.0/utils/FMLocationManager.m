@@ -9,6 +9,7 @@
 #import "FMLocationManager.h"
 #import "AFNetworkReachabilityManager.h"
 
+
 @interface FMLocationManager ()<BMKLocationServiceDelegate,BMKGeoCodeSearchDelegate,BMKPoiSearchDelegate>
 
 @property (nonatomic, strong) BMKLocationService *locationManager;
@@ -178,9 +179,9 @@
         _curlat = [NSNumber numberWithDouble:coordinate.latitude];
         _curlng = [NSNumber numberWithDouble:coordinate.longitude];
         
-//        NSLog(@"didUpdatelat===%@",_curlat);
-//        NSLog(@"didUpdatelng===%@",_curlng);
-//        NSLog(@"didUpdateBMKUserLocation===%f",userLocation.heading.trueHeading);
+        NSLog(@"didUpdatelat===%@",_curlat);
+        NSLog(@"didUpdatelng===%@",_curlng);
+        NSLog(@"didUpdateBMKUserLocation===%f",userLocation.heading.trueHeading);
         
         
         NSString * lng = [NSString stringWithFormat:@"%f",_currentLocation.location.coordinate.longitude];
@@ -236,7 +237,7 @@
     
     float direction = theHeading;
     
-//    NSLog(@"%lf==== %lf",d,direction);
+    NSLog(@"didUpdateUserHeading：======  %lf==== %lf",d,direction);
 //    if(nil != myLocationAnnotationView) {
 //        if (direction > 180)
 //        {

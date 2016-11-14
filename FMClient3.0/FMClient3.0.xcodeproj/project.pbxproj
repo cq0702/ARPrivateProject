@@ -109,6 +109,11 @@
 		7AFACB451DD9648800A21F98 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AFACB421DD9648800A21F98 /* logo.png */; };
 		7AFACB461DD9648800A21F98 /* logo@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AFACB431DD9648800A21F98 /* logo@2x.png */; };
 		7AFACB471DD9648800A21F98 /* logo@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AFACB441DD9648800A21F98 /* logo@3x.png */; };
+		7AFACB4A1DD9996C00A21F98 /* CATransform3DPerspect.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFACB491DD9996C00A21F98 /* CATransform3DPerspect.m */; };
+		7AFACB4C1DD9BCA000A21F98 /* eggimage.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AFACB4B1DD9BCA000A21F98 /* eggimage.png */; };
+		7AFACB4E1DD9BEDD00A21F98 /* eggimage11.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AFACB4D1DD9BEDD00A21F98 /* eggimage11.png */; };
+		7AFACB501DD9BF6F00A21F98 /* eggimage22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AFACB4F1DD9BF6F00A21F98 /* eggimage22.png */; };
+		7AFACB521DD9C23400A21F98 /* eggimage33.png in Resources */ = {isa = PBXBuildFile; fileRef = 7AFACB511DD9C23400A21F98 /* eggimage33.png */; };
 		BEC91FFE1DAB856400721122 /* iToast.m in Sources */ = {isa = PBXBuildFile; fileRef = BEC91FFD1DAB856400721122 /* iToast.m */; };
 /* End PBXBuildFile section */
 
@@ -264,6 +269,12 @@
 		7AFACB421DD9648800A21F98 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = logo.png; sourceTree = "<group>"; };
 		7AFACB431DD9648800A21F98 /* logo@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo@2x.png"; sourceTree = "<group>"; };
 		7AFACB441DD9648800A21F98 /* logo@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logo@3x.png"; sourceTree = "<group>"; };
+		7AFACB481DD9996C00A21F98 /* CATransform3DPerspect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CATransform3DPerspect.h; sourceTree = "<group>"; };
+		7AFACB491DD9996C00A21F98 /* CATransform3DPerspect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CATransform3DPerspect.m; sourceTree = "<group>"; };
+		7AFACB4B1DD9BCA000A21F98 /* eggimage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = eggimage.png; sourceTree = "<group>"; };
+		7AFACB4D1DD9BEDD00A21F98 /* eggimage11.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = eggimage11.png; sourceTree = "<group>"; };
+		7AFACB4F1DD9BF6F00A21F98 /* eggimage22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = eggimage22.png; sourceTree = "<group>"; };
+		7AFACB511DD9C23400A21F98 /* eggimage33.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = eggimage33.png; sourceTree = "<group>"; };
 		BB2ECC2291A434DA8B6E7FAB /* libPods-FMClient3.0.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FMClient3.0.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEC91FFC1DAB856400721122 /* iToast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iToast.h; sourceTree = "<group>"; };
 		BEC91FFD1DAB856400721122 /* iToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iToast.m; sourceTree = "<group>"; };
@@ -618,6 +629,8 @@
 		7ACF32031D61B6A20028577A /* controller */ = {
 			isa = PBXGroup;
 			children = (
+				7AFACB481DD9996C00A21F98 /* CATransform3DPerspect.h */,
+				7AFACB491DD9996C00A21F98 /* CATransform3DPerspect.m */,
 				7AA350061DD2F8E1008112AA /* EMScanCodeController.h */,
 				7AA350071DD2F8E1008112AA /* EMScanCodeController.m */,
 				7AA350081DD2F8E1008112AA /* EMScanCodeController.xib */,
@@ -681,6 +694,10 @@
 		7ACF44251D61C00B0028577A /* image */ = {
 			isa = PBXGroup;
 			children = (
+				7AFACB511DD9C23400A21F98 /* eggimage33.png */,
+				7AFACB4F1DD9BF6F00A21F98 /* eggimage22.png */,
+				7AFACB4B1DD9BCA000A21F98 /* eggimage.png */,
+				7AFACB4D1DD9BEDD00A21F98 /* eggimage11.png */,
 				7AFACB241DD9647100A21F98 /* 登录按钮.png */,
 				7AFACB251DD9647100A21F98 /* 登录按钮@2x.png */,
 				7AFACB261DD9647100A21F98 /* 登录按钮@3x.png */,
@@ -912,11 +929,13 @@
 				7AA3500A1DD2F8E1008112AA /* EMScanCodeController.xib in Resources */,
 				7AB737EB1DB8B11A0083F1C2 /* tab_mineicon_seclect@3x.png in Resources */,
 				7AB737E61DB8B11A0083F1C2 /* tab_homeicon.png in Resources */,
+				7AFACB521DD9C23400A21F98 /* eggimage33.png in Resources */,
 				7AFACB361DD9647100A21F98 /* 返回.png in Resources */,
 				7AB737E21DB8B11A0083F1C2 /* tab_discoveryicon@3x.png in Resources */,
 				7A01F5181DD5B22C00DC2856 /* imageTest22.png in Resources */,
 				7AFACB461DD9648800A21F98 /* logo@2x.png in Resources */,
 				7AB737E71DB8B11A0083F1C2 /* tab_homeicon@2x.png in Resources */,
+				7AFACB501DD9BF6F00A21F98 /* eggimage22.png in Resources */,
 				7AFACB221DD9645E00A21F98 /* BG@2x.png in Resources */,
 				7AFACB451DD9648800A21F98 /* logo.png in Resources */,
 				7AFACB3A1DD9647100A21F98 /* 密码@2x.png in Resources */,
@@ -937,10 +956,12 @@
 				7AB737ED1DB8B11A0083F1C2 /* tab_mineicon@2x.png in Resources */,
 				7AFACB3B1DD9647100A21F98 /* 密码@3x.png in Resources */,
 				7AFACB211DD9645E00A21F98 /* BG.png in Resources */,
+				7AFACB4C1DD9BCA000A21F98 /* eggimage.png in Resources */,
 				7AB737DD1DB8B11A0083F1C2 /* tab_discoveryicon_seclect@1x.png in Resources */,
 				7AB737E01DB8B11A0083F1C2 /* tab_discoveryicon@1x.png in Resources */,
 				7AFACB1D1DD9641900A21F98 /* LoginViewController.xib in Resources */,
 				7AB737DE1DB8B11A0083F1C2 /* tab_discoveryicon_seclect@2x.png in Resources */,
+				7AFACB4E1DD9BEDD00A21F98 /* eggimage11.png in Resources */,
 				7ACF32111D61B6A20028577A /* HomeViewController.xib in Resources */,
 				7AFACB381DD9647100A21F98 /* 返回@3x.png in Resources */,
 				7AB737F01DB8B11A0083F1C2 /* tab_newjouricon_seclect@2x.png in Resources */,
@@ -1042,6 +1063,7 @@
 				7ACF32191D61B6D60028577A /* MYBaseConfigUtils.m in Sources */,
 				7ACF32591D61B6E20028577A /* NSData+CommonCrypto.m in Sources */,
 				7ACF320B1D61B6A20028577A /* MYBaseModel.m in Sources */,
+				7AFACB4A1DD9996C00A21F98 /* CATransform3DPerspect.m in Sources */,
 				7ACF32121D61B6A20028577A /* MineViewController.m in Sources */,
 				7AA350281DD30865008112AA /* FMLocationManager.m in Sources */,
 				7ACF31C81D61B69C0028577A /* MYTabbutton.m in Sources */,
