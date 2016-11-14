@@ -60,7 +60,7 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     NSString* token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
-    if (token.length>0) {
+    if (token.length == 0) {
         //显示主界面
         MYMaintabcontroller * tabController = [[MYMaintabcontroller alloc] init];
         

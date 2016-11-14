@@ -5,6 +5,19 @@
 //  Created by YT on 15/11/25.
 //  Copyright © 2015年 FM. All rights reserved.
 //
+CATransform3D CATransform3DMakePerspective(CGPoint center, float disZ)
+{
+    CATransform3D transToCenter = CATransform3DMakeTranslation(-center.x, -center.y, 0);
+    CATransform3D transBack = CATransform3DMakeTranslation(center.x, center.y, 0);
+    CATransform3D scale = CATransform3DIdentity;
+    scale.m34 = -1.0f/disZ;
+    return CATransform3DConcat(CATransform3DConcat(transToCenter, scale), transBack);
+}
+
+CATransform3D CATransform3DPerspect(CATransform3D t, CGPoint center, float disZ)
+{
+    return CATransform3DConcat(t, CATransform3DMakePerspective(center, disZ));
+}
 
 #import "EMScanCodeController.h"
 
@@ -30,9 +43,11 @@
     [self InitScan];
     
     //取消扫描动画
-//    [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(targetImageAction) userInfo:nil repeats:YES];
+    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(update) userInfo:nil repeats:YES];
     
     [self addSubViews];
+    
+//    [self update];
     
 //    [self animationDaDaLogo];
     
@@ -41,7 +56,7 @@
 
 -(void)addSubViews
 {
-    self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(100, 100, 200, 400)];
+    self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(100, 100, 100, 200)];
     [self.readerView addSubview:self.targetImage];
     self.targetImage.clipsToBounds = YES;
     self.targetImage.contentMode = UIViewContentModeCenter;
@@ -52,17 +67,9 @@
     self.targetImage.layer.transform = transform;
     
     
-    CATransform3D translateForm = CATransform3DTranslate(transform, 0, 0, 1);
-    CATransform3D scalForm = CATransform3DScale(transform, 0.5, 0.5, 1);
-    
-//
-//    CATransform3D rotationForm  = CATransform3DRotate(transform, 60*M_PI/180, 1, 0, 0);
-    CATransform3D rotationForm  = CATransform3DMakeRotation(60*M_PI/180, 1, 1, 0);
-    
-//
-    CATransform3D contactForm  = CATransform3DConcat(scalForm, rotationForm);
-    
-    self.targetImage.layer.transform = rotationForm;
+    ////沿着X,Y轴旋转
+//    CATransform3D rotate = CATransform3DMakeRotation(M_PI/6, 0, 1, 0);
+//    self.targetImage.layer.transform = CATransform3DPerspect(rotate, CGPointMake(0, 100), 200);
     
 //    [self targetImageAction];
     
@@ -92,6 +99,17 @@
     
 }
 
+//旋转动画
+- (void)update
+{
+    static float angle = 0;
+    angle += 0.1f;
+    
+    CATransform3D transloate = CATransform3DMakeTranslation(0, 0, -200);
+    CATransform3D rotate = CATransform3DMakeRotation(angle, 0, 1, 0);
+    CATransform3D mat = CATransform3DConcat(rotate, transloate);
+    self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 0), 1000);
+}
 //拖动方法
 -(void)handlePan:(UIPanGestureRecognizer*) recognizer
 {
