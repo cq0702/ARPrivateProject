@@ -36,30 +36,12 @@
     [self startUpdates];
     
 }
+//-(void)addUIDynamicBehaviorAnimation
+//{
+//    UIDynamicBehavior *
+//}
 - (void)startUpdates
 {
-    // Create the location manager if this object does not
-//    // already have one.
-//    if (nil == _locationManager)
-//        _locationManager = [[CLLocationManager alloc] init];
-//    
-//    _locationManager.delegate = self;
-//    _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-//    
-//    // Set a movement threshold for new events
-//    _locationManager.distanceFilter = kCLDistanceFilterNone;
-//    _locationManager.headingFilter = 5;
-//    
-//    [_locationManager startUpdatingLocation];
-//    
-//    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
-//    {
-//        [self.locationManager requestWhenInUseAuthorization];
-//        [self.locationManager requestAlwaysAuthorization];
-//    }
-//    
-//    CLHeading * heading = [[CLHeading alloc]init];
-    
     
     if ([CLLocationManager headingAvailable]) {
         //创建显示方向的指南针Layer
