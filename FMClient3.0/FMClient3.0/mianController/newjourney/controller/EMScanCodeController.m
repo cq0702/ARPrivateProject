@@ -44,32 +44,47 @@
     
     
     //取消扫描动画
-    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(eggScalAnimation) userInfo:nil repeats:YES];
+//    [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(eggScalAnimation) userInfo:nil repeats:YES];
     
     [self addSubViews];
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateStatue) name:kLoadCurrentLocationSuccess object:nil];
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateStatue) name:kLoadCurrentLocationSuccess object:nil];
     
     
 //    [self animationDaDaLogo];
     
 }
-
--(void)eggScalAnimation
+-(void)viewDidDisappear:(BOOL)animated
 {
-    static float angle = 0;
-    angle += 0.05f;
-    
-    if (angle < 0.8) {
-        
-        CATransform3D transloate = CATransform3DMakeTranslation(0, 0, 0.000000000001);
-        CATransform3D rotate = CATransform3DMakeScale(angle, angle, 1);
-        CATransform3D rotation = CATransform3DMakeRotation(angle, 0.1, 0, 0);
-        
-        CATransform3D mat = CATransform3DConcat(rotation, rotate);
-        self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 0), 1000);
-    }
+    [super viewDidDisappear:animated];
+    [self.locationManager stopUpdatingHeading];
+    [self.locationManager stopUpdatingLocation];
 }
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    [self.locationManager startUpdatingHeading];
+    [self.locationManager startUpdatingLocation];
+    [self.readerView start];
+    
+    self.readerView.scanCrop = self.view.bounds;
+    self.navigationController.navigationBarHidden = YES;
+    
+}
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    [self.readLineView removeFromSuperview];
+    self.readLineView = nil;
+    [self.readerView stop];
+    //    [self ConfignavigationItemWith:NO];
+    
+    self.navigationController.navigationBarHidden = NO;
+}
+
 -(void)addSubViews
 {
     self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(100, 100, 100, 200)];
@@ -78,9 +93,21 @@
     self.targetImage.contentMode = UIViewContentModeCenter;
     
     self.targetImage.image = [UIImage imageNamed:@"imageTest.png"];
-    CATransform3D transform = CATransform3DIdentity;
-    transform.m34 = -1/500.0;
-    self.targetImage.layer.transform = transform;
+    
+    
+    //添加手势
+    UITapGestureRecognizer * tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
+    
+    
+    [self.targetImage addGestureRecognizer:tapGes];
+    
+    self.targetImage.userInteractionEnabled = YES;
+    self.targetImage.hidden = YES;
+    
+    
+//    CATransform3D transform = CATransform3DIdentity;
+//    transform.m34 = -1/500.0;
+//    self.targetImage.layer.transform = transform;
     
     
 //    CATransform3D translateForm = CATransform3DTranslate(transform, 0, 0, 1);
@@ -100,30 +127,6 @@
 //    self.targetImage.layer.transform = CATransform3DPerspect(rotate, CGPointMake(0, 100), 200);
     
 //    [self targetImageAction];
-    
-    [self update];
-    
-    //蒙板
-//    UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-//    UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
-//    effectView.frame = self.targetImage.bounds;
-//    [self.targetImage addSubview:effectView];  /////
-    
-    //添加手势
-    
-    UIPanGestureRecognizer * panGes = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(handlePan:)];
-    panGes.minimumNumberOfTouches = 1;
-    
-    UIPinchGestureRecognizer *pinchGes = [[UIPinchGestureRecognizer alloc]
-                                                        initWithTarget:self
-                                                        action:@selector(handlePinch:)];
-    
-    
-    
-    [self.targetImage addGestureRecognizer:panGes];
-    [self.targetImage addGestureRecognizer:pinchGes];
-    
-    self.targetImage.userInteractionEnabled = YES;
    
     
 }
@@ -137,68 +140,28 @@
     CATransform3D mat = CATransform3DConcat(rotate, transloate);
     self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 10), 1000);
 }
-//拖动方法
--(void)handlePan:(UIPanGestureRecognizer*) recognizer
+-(void)eggScalAnimation
 {
-    CGPoint translation = [recognizer translationInView:self.view];
-    recognizer.view.center = CGPointMake(recognizer.view.center.x + translation.x,
-                                         recognizer.view.center.y + translation.y);
-    [recognizer setTranslation:CGPointZero inView:self.view];
-}
--(void)handlePinch:(UIPinchGestureRecognizer *)recognizer
-{
-    recognizer.view.transform = CGAffineTransformScale(recognizer.view.transform, recognizer.scale, recognizer.scale);
-    recognizer.scale = 1;
-}
-
--(void)targetImageAction
-{
-    CABasicAnimation *rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.y"];
-    rotationAnimation.toValue = [NSNumber numberWithFloat:(M_PI)];
-    rotationAnimation.duration = 25.0f;
-    rotationAnimation.repeatCount = 100;
-//    rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    static float angle = 0;
+    angle += 0.05f;
     
-//    CABasicAnimation *scaleAnimation = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-//    scaleAnimation.toValue = [NSNumber numberWithFloat:0.0];
-//    scaleAnimation.duration = 0.35f;
-//    scaleAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    if (angle < 0.8) {
+        
+        CATransform3D rotate = CATransform3DMakeScale(angle, angle, 1);
+        CATransform3D rotation = CATransform3DMakeRotation(angle, 0.1, 0, 0);
+        
+        CATransform3D mat = CATransform3DConcat(rotation, rotate);
+        self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 0), 1000);
+    }
+}
+-(void)handlePinch:(UITapGestureRecognizer *)recognizer
+{
+    UIAlertView * alertview = [[UIAlertView alloc]initWithTitle:@"提示" message:@"恭喜你获得奖金100万！" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
     
-    CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
-    animationGroup.duration = 0.35f;
-    animationGroup.autoreverses = YES;
-    animationGroup.repeatCount = 1;
-    animationGroup.animations =[NSArray arrayWithObjects:rotationAnimation, nil];
-    [self.targetImage.layer addAnimation:rotationAnimation forKey:@"animationGroup"];
+    [alertview show];
     
 }
 
-- (void) animationDaDaLogo
-{
-    CATransform3D transform = CATransform3DIdentity;
-    transform.m34 = - 1 / 100.0f;   // 设置视点在Z轴正方形z=100
-    
-    // 动画结束时，在Z轴负方向60
-    CATransform3D startTransform = CATransform3DTranslate(transform, 0, 0, -60);
-    // 动画结束时，绕Y轴逆时针旋转90度
-    CATransform3D firstTransform = CATransform3DRotate(startTransform, M_PI_2, 0, 1, 0);
-    
-    // 通过CABasicAnimation修改transform属性
-    CABasicAnimation *animation1 = [CABasicAnimation animationWithKeyPath:@"transform"];
-    // 向后移动同时绕Y轴逆时针旋转90度
-    animation1.fromValue = [NSValue valueWithCATransform3D:CATransform3DIdentity];
-    animation1.toValue = [NSValue valueWithCATransform3D:firstTransform];
-    
-    // 虽然只有一个动画，但用Group只为以后好扩展
-    CAAnimationGroup *animationGroup = [CAAnimationGroup animation];
-    animationGroup.animations = [NSArray arrayWithObjects:animation1, nil];
-    animationGroup.duration = 0.5f;
-    animationGroup.delegate = self;     // 动画回调，在动画结束调用animationDidStop
-    animationGroup.removedOnCompletion = NO;    // 动画结束时停止，不回复原样
-    
-    // 对logoImg的图层应用动画
-    [self.targetImage.layer addAnimation:animationGroup forKey:@"FristAnimation"];
-}
 - (void) animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
 {
     if (flag)
@@ -261,27 +224,6 @@
     
     self.readerView.scanCrop = self.view.bounds;
     
-}
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    [self.readerView start];
-    
-    self.readerView.scanCrop = self.view.bounds;
-    self.navigationController.navigationBarHidden = YES;
-    
-}
--(void)viewWillDisappear:(BOOL)animated
-{
-    [super viewWillDisappear:animated];
-    
-    [self.readLineView removeFromSuperview];
-    self.readLineView = nil;
-    [self.readerView stop];
-//    [self ConfignavigationItemWith:NO];
-    
-     self.navigationController.navigationBarHidden = NO;
 }
 
 - (void)startUpdatesHeading
@@ -352,20 +294,22 @@
 {
     //     121.423552,31.203586  31.16946672086699  121.4102669075268
     CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
+    if (currentLocation == nil) {
+        return;
+    }
     CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.203586 longitude:121.423552];
     
     
     // 计算距离
     CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
     double temoLat = (targetLocation.coordinate.latitude - currentLocation.coordinate.latitude);
-    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
+//    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
     
-    double lngDistance = (double)fabs(temoLat) * 111320;
-    double latDistance = (double)fabs(temoLat) * 100000;
+    double lngDistance = (double)fabs(temoLat) * 111320;//两维度之间，相差一度，地理相差111320m
     
     int targetDegree = (int)asin(lngDistance/meters);
-    int targetDegree1 = (int)asin(0.95);
-    int tempDegree   = (int)atan(lngDistance/latDistance);
+//    int targetDegree1 = (int)asin(0.95);
+//    int tempDegree   = (int)atan(lngDistance/latDistance);
     
     NSInteger targetInt = [self getDirectionFromLocation:currentLocation andTargetLocation:targetLocation];
     
@@ -374,13 +318,26 @@
     int fromDegree = (int)self.direction % 90;
     
     if (fromInt == targetInt ) {//大致方向正确
-        if (targetDegree - 1 < fromDegree < targetDegree + 2) {
+        if (targetDegree - 0.5 < fromDegree < targetDegree + 0.5) {
             //图片出现
             NSLog(@"图片该出现了......");
+            [UIView animateWithDuration:0.5 animations:^{
+                
+                
+            } completion:^(BOOL finished) {
+                
+                
+                
+            }];
+            self.targetImage.hidden = NO;
             
         }
+    }else{
+        
+        self.targetImage.hidden = YES;
     }
 }
+//判断大致的方向问题
 -(NSInteger)getDirectionFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation
 {
     double fromLng = fromLoaction.coordinate.longitude;

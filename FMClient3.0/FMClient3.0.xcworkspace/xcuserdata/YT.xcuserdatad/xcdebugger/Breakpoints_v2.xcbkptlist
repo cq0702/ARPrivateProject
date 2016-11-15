@@ -52,11 +52,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FMClient3.0/mian-Appdelegate/AppDelegate.m"
-            timestampString = "500371215.739148"
+            timestampString = "500888074.634305"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
             landmarkName = "-loginStateChange"
             landmarkType = "7">
          </BreakpointContent>
@@ -158,11 +158,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FMClient3.0/mian-Appdelegate/AppDelegate.m"
-            timestampString = "500786145.101044"
+            timestampString = "500888074.634305"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
+            startingLineNumber = "75"
+            endingLineNumber = "75"
             landmarkName = "-configRootViewController"
             landmarkType = "7">
          </BreakpointContent>
@@ -170,15 +170,31 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FMClient3.0/mianController/newjourney/controller/EMScanCodeController.m"
-            timestampString = "500882861.045414"
+            timestampString = "500892987.475165"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "376"
-            endingLineNumber = "376"
+            startingLineNumber = "318"
+            endingLineNumber = "318"
+            landmarkName = "-updateStatue"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FMClient3.0/mianController/newjourney/controller/EMScanCodeController.m"
+            timestampString = "500892987.475165"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "304"
+            endingLineNumber = "304"
             landmarkName = "-updateStatue"
             landmarkType = "7">
          </BreakpointContent>
@@ -190,11 +206,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FMClient3.0/mianController/newjourney/controller/EMScanCodeController.m"
-            timestampString = "500882861.045414"
+            timestampString = "500892987.475165"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "361"
-            endingLineNumber = "361"
+            startingLineNumber = "315"
+            endingLineNumber = "315"
             landmarkName = "-updateStatue"
             landmarkType = "7">
          </BreakpointContent>
@@ -206,27 +222,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FMClient3.0/mianController/newjourney/controller/EMScanCodeController.m"
-            timestampString = "500882863.258013"
+            timestampString = "500892987.475165"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "373"
-            endingLineNumber = "373"
-            landmarkName = "-updateStatue"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "FMClient3.0/mianController/newjourney/controller/EMScanCodeController.m"
-            timestampString = "500882864.605094"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "370"
-            endingLineNumber = "370"
+            startingLineNumber = "312"
+            endingLineNumber = "312"
             landmarkName = "-updateStatue"
             landmarkType = "7">
          </BreakpointContent>

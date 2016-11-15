@@ -12,8 +12,18 @@
 #import "MYUtils.h"
 #import "FMLocationManager.h"
 #import "LoginViewController.h"
+
+#import "JPUSHService.h"
+#import <AdSupport/AdSupport.h>
+#ifdef NSFoundationVersionNumber_iOS_9_x_Max
+#import <UserNotifications/UserNotifications.h>
+#endif
+
 #define BAIDUKEY @"uGIwfMfh0s5bEB1dqLGW5GtAji7QGa4D"
-@interface AppDelegate ()
+#define JPUSHKEY @"9ed57edb8e98854f2f51fbf3"
+#define JPUSHMasterKey @"1a222686624079c7810ec297"
+
+@interface AppDelegate ()<JPUSHRegisterDelegate>
 
 @property (strong, nonatomic) BMKMapManager *mapManager;
 
@@ -113,6 +123,35 @@
     [BMKMapView willBackGround];//当应用即将后台时调用，停止一切调用opengl相关的操作
 }
 
+- (void)jspushConfigWithOptions:(NSDictionary *)launchOptions
+{
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 10.0) {
+        //iOS10以上
+        JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
+        entity.types = UNAuthorizationOptionAlert|UNAuthorizationOptionBadge|UNAuthorizationOptionSound;
+        [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
+    }else if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+        //iOS8以上可以添加自定义categories
+        [JPUSHService registerForRemoteNotificationTypes:(UIUserNotificationTypeBadge |
+                                                          UIUserNotificationTypeSound |
+                                                          UIUserNotificationTypeAlert)
+                                              categories:nil];
+    }
+    else {
+        //iOS8以下categories 必须为nil
+        [JPUSHService registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge|UIRemoteNotificationTypeSound |UIRemoteNotificationTypeAlert)
+                                              categories:nil];
+    }
+    BOOL isProduction = NO;// NO为开发环境，YES为生产环境
+    //广告标识符
+    NSString *advertisingId = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    //Required(2.1.5版本的SDK新增的注册方法，改成可上报IDFA，如果没有使用IDFA直接传nil
+    [JPUSHService setupWithOption:launchOptions appKey:JPUSHKEY
+                          channel:nil
+                 apsForProduction:isProduction
+            advertisingIdentifier:advertisingId];
+}
+
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
@@ -125,5 +164,87 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+#pragma mark ===== delegate
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    
+    /// Required - 注册 DeviceToken
+    [JPUSHService registerDeviceToken:deviceToken];
+}
+-(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error{
+    NSLog(@"did Fail To Register For Remote Notifications With Error: %@", error);
+}
+-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    if (IOS7) {
+        
+        [JPUSHService handleRemoteNotification:userInfo];
+        NSLog(@"iOS7及以上系统，收到通知:%@", [self logDic:userInfo]);
+        
+    }else
+    {
+        
+    }
+    
+    completionHandler(UIBackgroundFetchResultNewData);
+}
+//获取到通知信息
+-(NSString *)logDic:(NSDictionary *)dic {
+    if (![dic count]) {
+        return nil;
+    }
+    NSString *tempStr1 =
+    [[dic description] stringByReplacingOccurrencesOfString:@"\\u"
+                                                 withString:@"\\U"];
+    NSString *tempStr2 =
+    [tempStr1 stringByReplacingOccurrencesOfString:@"\"" withString:@"\\\""];
+    NSString *tempStr3 =
+    [[@"\"" stringByAppendingString:tempStr2] stringByAppendingString:@"\""];
+    NSData *tempData = [tempStr3 dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *str =
+    [NSPropertyListSerialization propertyListFromData:tempData
+                                     mutabilityOption:NSPropertyListImmutable
+                                               format:NULL
+                                     errorDescription:NULL];
+    return str;
+}
+#ifdef NSFoundationVersionNumber_iOS_9_x_Max
+#pragma mark- JPUSHRegisterDelegate
+-(void)jpushNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler {
+    
+    NSDictionary * userInfo = notification.request.content.userInfo;
+    UNNotificationRequest *request = notification.request; // 收到推送的请求
+    UNNotificationContent *content = request.content; // 收到推送的消息内容
+    NSNumber *badge = content.badge;  // 推送消息的角标
+    NSString *body = content.body;    // 推送消息体
+    UNNotificationSound *sound = content.sound;  // 推送消息的声音
+    NSString *subtitle = content.subtitle;  // 推送消息的副标题
+    NSString *title = content.title;  // 推送消息的标题
+    
+    if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+        [JPUSHService handleRemoteNotification:userInfo];
+        NSLog(@"iOS10 前台收到远程通知:%@", [self logDic:userInfo]);
+    }
+    // 需要执行这个方法，选择是否提醒用户，有Badge、Sound、Alert三种类型可以设置
+    completionHandler(UNNotificationPresentationOptionBadge|UNNotificationPresentationOptionSound|UNNotificationPresentationOptionAlert);
+}
+//
+-(void)jpushNotificationCenter:(UNUserNotificationCenter *)center
+didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
+    NSDictionary * userInfo = response.notification.request.content.userInfo;
+    UNNotificationRequest *request = response.notification.request; // 收到推送的请求
+    UNNotificationContent *content = request.content; // 收到推送的消息内容
+    NSNumber *badge = content.badge;  // 推送消息的角标
+    NSString *body = content.body;    // 推送消息体
+    UNNotificationSound *sound = content.sound;  // 推送消息的声音
+    NSString *subtitle = content.subtitle;  // 推送消息的副标题
+    NSString *title = content.title;  // 推送消息的标题
+    if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+        [JPUSHService handleRemoteNotification:userInfo];
+        NSLog(@"iOS10 收到远程通知:%@", [self logDic:userInfo]);
+    }
+    completionHandler();  // 系统要求执行这个方法
+}
+#endif
 
 @end

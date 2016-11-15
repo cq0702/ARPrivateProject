@@ -24,6 +24,8 @@
     if (self) {
         
         self.indexValue = 0;
+        self.backgroundColor = [UIColor redColor];
+        
     }
     return self;
 }
