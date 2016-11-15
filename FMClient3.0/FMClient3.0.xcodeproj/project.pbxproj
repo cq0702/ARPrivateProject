@@ -36,6 +36,10 @@
 		7A7CF0821DDAEA4500B305AA /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A7CF0811DDAEA4500B305AA /* CFNetwork.framework */; };
 		7A7CF0841DDAEA5000B305AA /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A7CF0831DDAEA5000B305AA /* CoreFoundation.framework */; };
 		7A7CF0861DDAEA6C00B305AA /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A7CF0851DDAEA6C00B305AA /* libresolv.tbd */; };
+		7A7CF08B1DDAEF3300B305AA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A7CF08A1DDAEF3300B305AA /* UIKit.framework */; };
+		7A7CF08D1DDAEF6600B305AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A7CF08C1DDAEF6600B305AA /* Foundation.framework */; };
+		7A7CF08F1DDAEF8F00B305AA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A7CF08E1DDAEF8F00B305AA /* libz.tbd */; };
+		7A7CF0911DDAEFBC00B305AA /* jpush-ios-2.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A7CF0901DDAEFBC00B305AA /* jpush-ios-2.2.0.a */; };
 		7AA34FE21DD2F741008112AA /* coorPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AA34FE11DD2F741008112AA /* coorPlugin.m */; };
 		7AA350091DD2F8E1008112AA /* EMScanCodeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AA350071DD2F8E1008112AA /* EMScanCodeController.m */; };
 		7AA3500A1DD2F8E1008112AA /* EMScanCodeController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7AA350081DD2F8E1008112AA /* EMScanCodeController.xib */; };
@@ -159,6 +163,10 @@
 		7A7CF0811DDAEA4500B305AA /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		7A7CF0831DDAEA5000B305AA /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		7A7CF0851DDAEA6C00B305AA /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		7A7CF08A1DDAEF3300B305AA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		7A7CF08C1DDAEF6600B305AA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		7A7CF08E1DDAEF8F00B305AA /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		7A7CF0901DDAEFBC00B305AA /* jpush-ios-2.2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "jpush-ios-2.2.0.a"; sourceTree = "<group>"; };
 		7AA34FE01DD2F741008112AA /* coorPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coorPlugin.h; sourceTree = "<group>"; };
 		7AA34FE11DD2F741008112AA /* coorPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = coorPlugin.m; sourceTree = "<group>"; };
 		7AA350061DD2F8E1008112AA /* EMScanCodeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMScanCodeController.h; sourceTree = "<group>"; };
@@ -272,8 +280,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A7CF08F1DDAEF8F00B305AA /* libz.tbd in Frameworks */,
+				7A7CF08D1DDAEF6600B305AA /* Foundation.framework in Frameworks */,
+				7AA3500E1DD2FA1F008112AA /* QuartzCore.framework in Frameworks */,
+				7A7CF08B1DDAEF3300B305AA /* UIKit.framework in Frameworks */,
 				7A7CF0861DDAEA6C00B305AA /* libresolv.tbd in Frameworks */,
 				7A7CF0841DDAEA5000B305AA /* CoreFoundation.framework in Frameworks */,
+				7A7CF0911DDAEFBC00B305AA /* jpush-ios-2.2.0.a in Frameworks */,
 				7A7CF0821DDAEA4500B305AA /* CFNetwork.framework in Frameworks */,
 				7A7CF0801DDAE9FE00B305AA /* AdSupport.framework in Frameworks */,
 				7A7CF07D1DDAE9D900B305AA /* UserNotifications.framework in Frameworks */,
@@ -287,7 +300,6 @@
 				7AA350141DD2FA43008112AA /* CoreGraphics.framework in Frameworks */,
 				7AA350121DD2FA31008112AA /* Security.framework in Frameworks */,
 				7AA350101DD2FA26008112AA /* SystemConfiguration.framework in Frameworks */,
-				7AA3500E1DD2FA1F008112AA /* QuartzCore.framework in Frameworks */,
 				7AA3500C1DD2F9CB008112AA /* libiconv.tbd in Frameworks */,
 				7ACF3B491D61BC980028577A /* AssetsLibrary.framework in Frameworks */,
 				3B335C2A054453D78FA7F50C /* libPods-FMClient3.0.a in Frameworks */,
@@ -324,6 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				7A7CF07A1DDAE98F00B305AA /* JPUSHService.h */,
+				7A7CF0901DDAEFBC00B305AA /* jpush-ios-2.2.0.a */,
 				7AA3502A1DD30881008112AA /* baiduFrameWork */,
 			);
 			path = lib;
@@ -762,6 +775,9 @@
 		F84078983C94B1CD685A838A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7A7CF08E1DDAEF8F00B305AA /* libz.tbd */,
+				7A7CF08C1DDAEF6600B305AA /* Foundation.framework */,
+				7A7CF08A1DDAEF3300B305AA /* UIKit.framework */,
 				7A7CF0851DDAEA6C00B305AA /* libresolv.tbd */,
 				7A7CF0831DDAEA5000B305AA /* CoreFoundation.framework */,
 				7A7CF0811DDAEA4500B305AA /* CFNetwork.framework */,
