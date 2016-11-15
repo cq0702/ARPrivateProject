@@ -72,7 +72,7 @@
         
         //    }else{
         //
-        //        //设置windows根视
+        //  //设置windows根视
         self.window.rootViewController = tabController;
         //    }
 

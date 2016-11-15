@@ -11,6 +11,7 @@
 #import "CATransform3DPerspect.h"
 #import <CoreLocation/CoreLocation.h>
 #import "FMLocationManager.h"
+#import <math.h>
 
 
 @interface EMScanCodeController ()<CAAnimationDelegate,CLLocationManagerDelegate>
@@ -24,6 +25,9 @@
 
 
 @property (nonatomic,strong)CLLocationManager * locationManager;
+@property (nonatomic,assign)float direction;
+
+
 
 @end
 
@@ -44,27 +48,13 @@
     
     [self addSubViews];
     
-    [self addEggSubViews];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateStatue) name:kLoadCurrentLocationSuccess object:nil];
+    
     
 //    [self animationDaDaLogo];
     
 }
--(void)addEggSubViews
-{
-    self.eggImage = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"eggimage33.png"]];
-    self.eggImage.frame = CGRectMake((SCREEN_WIDTH - 240)/2, SCREEN_HEIGHT - 349, 240, 350);
-    
-    [self.view addSubview: self.eggImage];
-    
-    
-    ////沿着X,Y轴旋转
-//        CATransform3D rotate = CATransform3DMakeRotation(M_PI/9, 0.3, 0, 0);
-//        self.eggImage.layer.transform = CATransform3DPerspect(rotate, CGPointMake(0, 0), 200);
-    
-    
-    
-    
-}
+
 -(void)eggScalAnimation
 {
     static float angle = 0;
@@ -350,19 +340,71 @@
         
         float direction = theHeading;
         
+        self.direction = direction;
+        
         NSLog(@"startUpdatesHeading ：%lf==== %lf",d,direction);
         // Do something with the event data.
         
-       double lng = [FMLocationManager sharedManager].currentLocation.location.coordinate.longitude;
-       double lat = [FMLocationManager sharedManager].currentLocation.location.coordinate.latitude;
-        
-        NSString *lngStr = [NSString stringWithFormat:@"%0.6f",lng];
-        NSString *latStr = [NSString stringWithFormat:@"%0.6f",lat];
-
-//     121.423552,31.203586  31.16946672086699  121.4102669075268
-        
-        
+        [self updateStatue];
     }
+}
+-(void)updateStatue
+{
+    //     121.423552,31.203586  31.16946672086699  121.4102669075268
+    CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
+    CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.203586 longitude:121.423552];
+    
+    
+    // 计算距离
+    CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
+    double temoLat = (targetLocation.coordinate.latitude - currentLocation.coordinate.latitude);
+    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
+    
+    double lngDistance = (double)fabs(temoLat) * 111320;
+    double latDistance = (double)fabs(temoLat) * 100000;
+    
+    int targetDegree = (int)asin(lngDistance/meters);
+    int targetDegree1 = (int)asin(0.95);
+    int tempDegree   = (int)atan(lngDistance/latDistance);
+    
+    NSInteger targetInt = [self getDirectionFromLocation:currentLocation andTargetLocation:targetLocation];
+    
+    //判断方向
+    NSInteger fromInt = self.direction / 90;
+    int fromDegree = (int)self.direction % 90;
+    
+    if (fromInt == targetInt ) {//大致方向正确
+        if (targetDegree - 1 < fromDegree < targetDegree + 2) {
+            //图片出现
+            NSLog(@"图片该出现了......");
+            
+        }
+    }
+}
+-(NSInteger)getDirectionFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation
+{
+    double fromLng = fromLoaction.coordinate.longitude;
+    double fromLat = fromLoaction.coordinate.latitude;
+    
+    double targetLng = TatgetLocation.coordinate.longitude;
+    double targetLat = TatgetLocation.coordinate.latitude;
+    
+    if (targetLat > fromLat) {
+        if (targetLng > fromLng) {
+            return 0;
+        }else{
+            return 3;
+            
+        }
+    }else{
+        
+        if (targetLng > fromLng) {
+            return 1;
+        }else{
+            return 2;
+        }
+    }
+    
 }
 
 @end
