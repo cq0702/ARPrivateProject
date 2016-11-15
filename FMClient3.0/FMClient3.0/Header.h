@@ -57,7 +57,7 @@
 //4.统一字体
 //#f1870a#e95604
 #define MYSystemFont @"HiraginoSansGB-W3"//冬青黑体
-#define MYNAVIGATIONCOLORDATA @"#e82a2b"//导航栏的颜色
+#define MYNAVIGATIONCOLORDATA @"#35B0FD"//导航栏的颜色
 #define MYORANGECOLOR MYColor(235, 114, 13)//橙色的按钮
 
 //5.统一字号

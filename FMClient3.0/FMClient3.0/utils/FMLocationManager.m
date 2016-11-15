@@ -184,8 +184,8 @@
         NSLog(@"didUpdateBMKUserLocation===%f",userLocation.heading.trueHeading);
         
         
-        NSString * lng = [NSString stringWithFormat:@"%f",_currentLocation.location.coordinate.longitude];
-        NSString * lat = [NSString stringWithFormat:@"%f",_currentLocation.location.coordinate.latitude];
+//        NSString * lng = [NSString stringWithFormat:@"%f",_currentLocation.location.coordinate.longitude];
+//        NSString * lat = [NSString stringWithFormat:@"%f",_currentLocation.location.coordinate.latitude];
         
        
         

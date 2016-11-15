@@ -21,7 +21,7 @@
            timingFunction:(NSString *)timingFunction
                      view:(UIView *)theView
 {
-    /** CATransition
+    /** CATransition  
      *
      *  @see http://www.dreamingwish.com/dream-2012/the-concept-of-coreanimation-programming-guide.html
      *  @see http://geeklu.com/2012/09/animation-in-ios/

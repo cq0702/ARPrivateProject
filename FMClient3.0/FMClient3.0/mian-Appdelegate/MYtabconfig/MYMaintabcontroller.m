@@ -79,7 +79,7 @@
     
     self.journey  = [[EMScanCodeController alloc] initWithNibName:@"EMScanCodeController" bundle:nil];
     
-    [self setupChildViewController:_journey  withTitle:@"活动" imageName:@"tab_newjouricon"  selectedName:@"tab_newjouricon_seclect"];
+    [self setupChildViewController:_journey  withTitle:@"活动" imageName:@"Bitmap"  selectedName:@"Bitmap"];
     [self setupChildViewController:_home  withTitle:@"销毁" imageName:@"tab_homeicon"   selectedName:@"tab_homeicon_seclect"];
     
 //    [self setupChildViewController:_discover withTitle:@"会员" imageName:@"tab_discoveryicon" selectedName:@"tab_discoveryicon_seclect"];

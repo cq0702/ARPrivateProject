@@ -358,14 +358,13 @@
     // 计算距离
     CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
     double temoLat = (targetLocation.coordinate.latitude - currentLocation.coordinate.latitude);
-    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
+//    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
     
-    double lngDistance = (double)fabs(temoLat) * 111320;
-    double latDistance = (double)fabs(temoLat) * 100000;
+    double lngDistance = (double)fabs(temoLat) * 111320;//两维度之间，相差一度，地理相差111320m
     
     int targetDegree = (int)asin(lngDistance/meters);
-    int targetDegree1 = (int)asin(0.95);
-    int tempDegree   = (int)atan(lngDistance/latDistance);
+//    int targetDegree1 = (int)asin(0.95);
+//    int tempDegree   = (int)atan(lngDistance/latDistance);
     
     NSInteger targetInt = [self getDirectionFromLocation:currentLocation andTargetLocation:targetLocation];
     
@@ -381,6 +380,7 @@
         }
     }
 }
+//判断大致的方向问题
 -(NSInteger)getDirectionFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation
 {
     double fromLng = fromLoaction.coordinate.longitude;
