@@ -7,6 +7,8 @@
 //
 
 
+#define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
+
 #import "EMScanCodeController.h"
 #import "CATransform3DPerspect.h"
 #import <CoreLocation/CoreLocation.h>
@@ -307,7 +309,10 @@
     
     double lngDistance = (double)fabs(temoLat) * 111320;//两维度之间，相差一度，地理相差111320m
     
-    int targetDegree = (int)asin(lngDistance/meters);
+    double targetDegree = (double)asin(lngDistance/meters);
+    
+   
+    
 //    int targetDegree1 = (int)asin(0.95);
 //    int tempDegree   = (int)atan(lngDistance/latDistance);
     
@@ -317,20 +322,25 @@
     NSInteger fromInt = self.direction / 90;
     int fromDegree = (int)self.direction % 90;
     
+     NSLog(@"Output radians as degrees: %f", RADIANS_TO_DEGREES(targetDegree));
+     NSLog(@"fromDegree: %f", fromDegree);
+    
+    int maxValue = RADIANS_TO_DEGREES(targetDegree) + 5;
+    int minVlaue = RADIANS_TO_DEGREES(targetDegree) - 5;
+    
     if (fromInt == targetInt ) {//大致方向正确
-        if (targetDegree - 0.5 < fromDegree < targetDegree + 0.5) {
+        if (minVlaue < fromDegree && fromDegree < maxValue) {
             //图片出现
             NSLog(@"图片该出现了......");
             [UIView animateWithDuration:0.5 animations:^{
                 
-                
             } completion:^(BOOL finished) {
-                
-                
                 
             }];
             self.targetImage.hidden = NO;
-            
+        }else
+        {
+            self.targetImage.hidden = YES;
         }
     }else{
         
