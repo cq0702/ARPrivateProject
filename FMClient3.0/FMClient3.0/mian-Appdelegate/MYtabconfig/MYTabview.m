@@ -24,7 +24,6 @@
     if (self) {
         
         self.indexValue = 0;
-        self.backgroundColor = [UIColor redColor];
         
     }
     return self;
@@ -82,7 +81,7 @@
 {
     [super layoutSubviews];
     
-    self.backgroundColor = [UIColor colorWithDtString:@"#f2f2f2"];
+    self.backgroundColor = [UIColor colorWithDtString:@"#f8f8f8"];
     
     CGFloat h = self.frame.size.height;
     CGFloat w = self.frame.size.width;
