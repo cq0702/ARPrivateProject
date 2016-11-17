@@ -105,7 +105,7 @@
     [self.readerView addSubview:self.targetImage];
     
     self.targetImage.image = [UIImage imageNamed:@"3Dimage22.png"];
-    self.targetImage.alpha = 1;
+    self.targetImage.alpha = 0;
     
     
     
@@ -282,21 +282,23 @@
             
         }else if (fromDegree > marginMinVlue && fromDegree < minVlaue){
 //            NSLog(@"marginMinVlue------");
+            self.targetImage.alpha = 1;
             [self moveTargetImageAnimationWith:fromDegree];
             
         }else if (fromDegree > maxValue && fromDegree < marginMaxVlue){
             
+            self.targetImage.alpha = 1;
             [self moveTargetImageAnimationWith:fromDegree];
 //            NSLog(@"marginMaxVlue+++++++");
         }
 
         else{
             
-           self.targetImage.alpha = 1;
+           self.targetImage.alpha = 0;
         }
     }else{
         
-        self.targetImage.alpha = 1;
+        self.targetImage.alpha = 0;
         
     }
 }

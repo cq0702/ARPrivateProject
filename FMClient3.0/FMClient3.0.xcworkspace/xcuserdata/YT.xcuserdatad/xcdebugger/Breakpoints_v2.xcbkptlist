@@ -190,11 +190,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "FMClient3.0/mianController/newjourney/controller/EMScanCodeController.m"
-            timestampString = "501065406.380519"
+            timestampString = "501065838.690203"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "359"
-            endingLineNumber = "359"
+            startingLineNumber = "361"
+            endingLineNumber = "361"
             landmarkName = "-getMyCoordinateValue:"
             landmarkType = "7">
          </BreakpointContent>
