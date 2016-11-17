@@ -96,6 +96,7 @@
         self.isLocating = YES;
         [_locationManager startUserLocationService];
         
+        
         [NSTimer scheduledTimerWithTimeInterval:25 target:self selector:@selector(locatingTimeout) userInfo:nil repeats:NO];
     }
 }
@@ -220,24 +221,24 @@
     }
 
 }
--(void)didUpdateUserHeading:(BMKUserLocation *)userLocation
-{
-    [self setUserHeading:userLocation];
-    
-}
--(void) setUserHeading:(BMKUserLocation*)userHeading {
-    
-    if(nil == userHeading || nil == userHeading.heading
-       || userHeading.heading.headingAccuracy < 0) {
-        return;
-    }
-    
-    CLLocationDirection  theHeading = userHeading.heading.magneticHeading;
-    double d = 360 - theHeading;
-    
-    float direction = theHeading;
-    
-    NSLog(@"didUpdateUserHeading：======  %lf==== %lf",d,direction);
+//-(void)didUpdateUserHeading:(BMKUserLocation *)userLocation
+//{
+//    [self setUserHeading:userLocation];
+//    
+//}
+//-(void) setUserHeading:(BMKUserLocation*)userHeading {
+//    
+//    if(nil == userHeading || nil == userHeading.heading
+//       || userHeading.heading.headingAccuracy < 0) {
+//        return;
+//    }
+//    
+//    CLLocationDirection  theHeading = userHeading.heading.magneticHeading;
+//    double d = 360 - theHeading;
+//    
+//    float direction = theHeading;
+//    
+//    NSLog(@"didUpdateUserHeading：======  %lf==== %lf",d,direction);
 //    if(nil != myLocationAnnotationView) {
 //        if (direction > 180)
 //        {
@@ -249,7 +250,7 @@
 //        }
 //        myLocationAnnotationView.image = [myLocationImage imageRotatedByDegrees:-direction];
 //    }
-}
+//}
 #pragma mark 设置持续定位
 - (void)autoLocating
 {

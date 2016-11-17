@@ -30,6 +30,11 @@
 @property (nonatomic,assign)float direction;
 
 @property (nonatomic,strong)NSTimer * timer;
+@property (nonatomic,strong)UITapGestureRecognizer * tapGes;
+
+@property (nonatomic,assign)NSInteger startIndex;
+
+
 
 @end
 
@@ -37,24 +42,24 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-//    [self initNavBar];
+    //    [self initNavBar];
     self.view.backgroundColor = [UIColor whiteColor];
     
     [self InitScan];
     
-//    [self startUpdatesHeading]; //开始指南针
+    [self startUpdatesHeading]; //开始指南针
     
     
     [self addSubViews];
     
     
     
-//    [self targetImageAnimation];//添加动画
-//
-//    //位置动画
-//        [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(targetImageStatueAction) userInfo:nil repeats:YES];
+    //    [self targetImageAnimation];//添加动画
+    //
+    //    //位置动画
     
-//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateStatue) name:kLoadCurrentLocationSuccess object:nil];
+    
+    //    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateStatue) name:kLoadCurrentLocationSuccess object:nil];
     
     
 }
@@ -91,61 +96,24 @@
 
 -(void)addSubViews
 {
-    self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(80, SCREEN_HEIGHT/2 - 150, 150, 150)];
+    self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(80, SCREEN_HEIGHT - 450, 150, 150)];
     [self.readerView addSubview:self.targetImage];
     
-    self.targetImage.image = [UIImage imageNamed:@"3Dimage11.jpg"];
-    self.targetImage.alpha = 1;
+    self.targetImage.image = [UIImage imageNamed:@"3Dimage22.png"];
+    self.targetImage.alpha = 0;
     
-    CATransform3D transform = CATransform3DIdentity;
-    transform.m34 = -1/500.0;
-    self.targetImage.layer.transform = transform;
+    
+        CATransform3D transform = CATransform3DIdentity;
+        transform.m34 = -1/500.0;
 
+//      CATransform3DMakeRotation(0.78, 1.0, 0.0, 0.0);
     
-//    CATransform3DMakeRotation(0.78, 1.0, 0.0, 0.0);
-    CATransform3D rotate = CATransform3DMakeScale(0.3, 0.3, 1);
-    CATransform3D rotation = CATransform3DMakeRotation(-0.78, 1.0, 0.0, 0.0);
+        CATransform3D scale = CATransform3DMakeScale(0.3, 0.3, 1);
+        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
     
-    CATransform3D mat = CATransform3DConcat(rotation, rotate);
-    self.targetImage.layer.transform = CATransform3DPerspect(rotation, CGPointMake(0, 0), 1000);
-    
-//    [self targetStartImageAnimation];
-    
-    
-    
-    ////沿着X,Y轴旋转
-//    CATransform3D rotate = CATransform3DMakeRotation(-M_PI/6, 1, 0, 0);
-//    CATransform3D scale  = CATransform3DMakeScale(0.5, 0.5, 1);
-//    CATransform3D contanct = CATransform3DConcat(rotate, scale);
-//    
-//    self.targetImage.layer.transform = CATransform3DPerspect(contanct, CGPointMake(0, 100), 200);
-
-}
-
-//模拟位置动画
--(void)targetImageStatueAction
-{
-    static float angle = 0;
-    angle += 0.05f;
-    if (angle <= 1) {
-        
-        CATransform3D rotate = CATransform3DMakeScale(angle, angle, 1);
-        CATransform3D rotation = CATransform3DMakeRotation(-M_PI/6, 0.1, 0, 0);
-        
-        CATransform3D mat = CATransform3DConcat(rotation, rotate);
-        self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 0), 1000);
-        
-        
-        
-        if (angle == 1) {
-            
-            //添加手势
-            UITapGestureRecognizer * tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
-            
-            [self.targetImage addGestureRecognizer:tapGes];
-            self.targetImage.userInteractionEnabled = YES;
-        }
-    }
+        CATransform3D concat = CATransform3DConcat(rotation, scale);//X Y轴不能用
+        transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
+        self.targetImage.layer.transform = transform;
 
 }
 -(void)handlePinch:(UITapGestureRecognizer *)recognizer
@@ -163,7 +131,7 @@
     self.readerView = [ZBarReaderView new];
     self.readerView.frame = self.view.bounds;
     self.readerView.backgroundColor = [UIColor clearColor];
-    self.readerView.layer.contents  = (id)[UIImage imageNamed:@"scanBg_icon.png"];
+//    self.readerView.layer.contents  = (id)[UIImage imageNamed:@"scanBg_icon.png"];
     self.readerView.alpha = 1;
     
     self.readerView.allowsPinchZoom = NO;//使用手势变焦
@@ -172,7 +140,7 @@
     self.readerView.torchMode = 0;          // 0 表示关闭闪光灯，1表示打开
     self.readerView.tracksSymbols = NO;     // Can not show trace marker
     
-    self.readerView.trackingColor = [UIColor redColor];
+    self.readerView.trackingColor = [UIColor clearColor];
     self.readerView.readerDelegate = self;
     
     //设定扫描的类型，QR
@@ -199,16 +167,16 @@
     
     if ([CLLocationManager headingAvailable]) {
         //创建显示方向的指南针Layer
-//        CALayer * znzLayer = [[CALayer alloc]init];
-//        NSInteger screenHeight = [UIScreen mainScreen].bounds.size.height;
-//        NSInteger screenWidth = [UIScreen mainScreen].bounds.size.width;
-//        NSInteger y = (screenHeight - 320)/2;
-//        NSInteger x = (screenWidth - 320)/2;
-//        znzLayer.frame = CGRectMake(x, y, 320, 320);
-//        
-//        znzLayer.contents = (id)[[UIImage imageNamed:@"znz.png"]CGImage];
-//        
-//        [self.view.layer addSublayer:znzLayer];
+        //        CALayer * znzLayer = [[CALayer alloc]init];
+        //        NSInteger screenHeight = [UIScreen mainScreen].bounds.size.height;
+        //        NSInteger screenWidth = [UIScreen mainScreen].bounds.size.width;
+        //        NSInteger y = (screenHeight - 320)/2;
+        //        NSInteger x = (screenWidth - 320)/2;
+        //        znzLayer.frame = CGRectMake(x, y, 320, 320);
+        //
+        //        znzLayer.contents = (id)[[UIImage imageNamed:@"znz.png"]CGImage];
+        //
+        //        [self.view.layer addSublayer:znzLayer];
         
         self.locationManager = [[CLLocationManager alloc]init];
         self.locationManager.delegate = self;
@@ -216,7 +184,7 @@
         
     }else{
         
-//        NSLog(@"设备不支持磁力计");
+        //        NSLog(@"设备不支持磁力计");
     }
     
 }
@@ -247,7 +215,7 @@
         
         self.direction = direction;
         
-//        NSLog(@"startUpdatesHeading ：%lf==== %lf",d,direction);
+        //        NSLog(@"startUpdatesHeading ：%lf==== %lf",d,direction);
         // Do something with the event data.
         
         [self updateStatue];
@@ -266,7 +234,7 @@
     // 计算距离
     CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
     double temoLat = (targetLocation.coordinate.latitude - currentLocation.coordinate.latitude);
-//    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
+    //    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
     
     double lngDistance = (double)fabs(temoLat) * 111320;//两维度之间，相差一度，地理相差111320m
     
@@ -278,11 +246,11 @@
     NSInteger fromInt = self.direction / 90;
     int fromDegree = (int)self.direction % 90;
     
-//     NSLog(@"Output radians as degrees: %f", RADIANS_TO_DEGREES(targetDegree));
-//     NSLog(@"fromDegree: %f", fromDegree);
+    //     NSLog(@"Output radians as degrees: %f", RADIANS_TO_DEGREES(targetDegree));
+    //     NSLog(@"fromDegree: %f", fromDegree);
     
-    int maxValue = RADIANS_TO_DEGREES(targetDegree) + 5;
-    int minVlaue = RADIANS_TO_DEGREES(targetDegree) - 5;
+    int maxValue = RADIANS_TO_DEGREES(targetDegree) + 8;
+    int minVlaue = RADIANS_TO_DEGREES(targetDegree) - 8;
     
     if (fromInt == targetInt ) {//大致方向正确
         if (minVlaue < fromDegree && fromDegree < maxValue) {
@@ -291,54 +259,33 @@
             NSLog(@"图片该出现了......");
             
             self.targetImage.alpha = 1;
-             [self targetStartImageAnimation];
-        
-//            [UIView animateWithDuration:0.5 animations:^{
-//                
-//            } completion:^(BOOL finished) {
-//                self.targetImage.alpha = 1;
-//                
-//                if (_timer != nil) {
-//                    [_timer invalidate];
-//                    _timer = nil;
-//                }
-//                _timer = [NSTimer timerWithTimeInterval:1
-//                                                 target:self
-//                                               selector:@selector(changeScalAnimation)
-//                                               userInfo:nil
-//                                                repeats:YES];
-//                
-//                [[NSRunLoop currentRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
+            if (self.startIndex == 0) {
+                
+                [self targetStartImageAnimation];
                
-//            }];
-//            self.targetImage.hidden = NO;
+            }else if( self.startIndex == 1){
+                
+                
+                if (_timer != nil) {
+                    [_timer invalidate];
+                    _timer = nil;
+                }
+                _timer = [NSTimer timerWithTimeInterval:1
+                                                 target:self
+                                               selector:@selector(targetImageStatueAction)
+                                               userInfo:nil
+                                                repeats:YES];
+                
+                [[NSRunLoop currentRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
+            }
             
         }else{
-            
-            [UIView animateWithDuration:0.5 animations:^{
-                
-            } completion:^(BOOL finished) {
-                
-                self.targetImage.alpha = 1;
-//                self.timer = nil;
-                
-            }];
-//            self.targetImage.hidden = YES;
+           self.targetImage.alpha = 0;
         }
     }else{
         
-        [UIView animateWithDuration:0.5 animations:^{
-            
-        } completion:^(BOOL finished) {
-            
-          self.targetImage.alpha = 1;
-            
-//          [self update];
-//          self.timer = nil;
-            
-        }];
+        self.targetImage.alpha = 0;
         
-//        self.targetImage.hidden = YES;
     }
 }
 
@@ -346,42 +293,69 @@
 -(void)targetStartImageAnimation
 {
     self.targetImage.transform = CGAffineTransformMakeScale(0.1, 0.1);
-    [UIView animateWithDuration:1   animations:^{
+    [UIView animateWithDuration:0.5   animations:^{
         
-        self.targetImage.transform = CGAffineTransformMakeScale(1.2, 1.2);
+        self.targetImage.transform = CGAffineTransformMakeScale(0.8, 0.8);
         
     }completion:^(BOOL finish){
         
-        [UIView animateWithDuration:1 animations:^{
+        [UIView animateWithDuration:0.5 animations:^{
             
-            self.targetImage.transform = CGAffineTransformMakeScale(0.9, 0.9);
+            self.targetImage.transform = CGAffineTransformMakeScale(0.5, 0.5);
             
         }completion:^(BOOL finish){
             
-            [UIView animateWithDuration:1 animations:^{
+            [UIView animateWithDuration:0.5 animations:^{
                 
-                self.targetImage.transform = CGAffineTransformMakeScale(1, 1);
+                self.targetImage.transform = CGAffineTransformMakeScale(0.3, 0.3);
                 
             }completion:^(BOOL finish){
+                
+                 self.startIndex = 1;
                 
             }];
         }];
     }];
 }
 
--(void)changeScalAnimation
+
+
+//模拟位置动画
+-(void)targetImageStatueAction
 {
-    static float angle = 0;
+    static float angle = 0.3;
     angle += 0.05f;
     
-//    if (angle < 0.8) {
-//    
-//        CATransform3D rotate = CATransform3DMakeScale(angle, angle, 1);
-//        CATransform3D rotation = CATransform3DMakeRotation(angle, 0.1, 0, 0);
-//        
-//        CATransform3D mat = CATransform3DConcat(rotation, rotate);
-//        self.targetImage.layer.transform = CATransform3DPerspect(mat, CGPointMake(0, 0), 1000);
-//    }
+    if (angle <= 1.1) {
+        
+        CATransform3D scale = CATransform3DMakeScale(angle, angle, 1);
+        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
+        
+        CATransform3D concat = CATransform3DConcat(rotation, scale);
+        self.targetImage.layer.transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
+        
+        [UIView animateWithDuration:1 animations:^{
+            
+        } completion:^(BOOL finished) {
+            
+            CGPoint center = self.targetImage.center;
+            center.y += 10;
+            
+            self.targetImage .center = center;
+            
+        }];
+        
+    }else if (angle > 1.1)
+    {
+        if (self.tapGes == nil) {
+            
+            //添加手势
+            self.tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
+            
+            [self.targetImage addGestureRecognizer:self.tapGes];
+            self.targetImage.userInteractionEnabled = YES;
+        }
+    }
 }
 
 //判断大致的方向问题

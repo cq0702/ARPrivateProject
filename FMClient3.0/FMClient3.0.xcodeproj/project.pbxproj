@@ -42,6 +42,7 @@
 		7A7CF0911DDAEFBC00B305AA /* jpush-ios-2.2.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A7CF0901DDAEFBC00B305AA /* jpush-ios-2.2.0.a */; };
 		7A7CF0931DDC328400B305AA /* 3Dimage.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7A7CF0921DDC328400B305AA /* 3Dimage.jpg */; };
 		7A7CF0951DDC33D500B305AA /* 3Dimage11@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7A7CF0941DDC33D500B305AA /* 3Dimage11@2x.jpg */; };
+		7A7CF0971DDC576A00B305AA /* 3Dimage22.png in Resources */ = {isa = PBXBuildFile; fileRef = 7A7CF0961DDC576A00B305AA /* 3Dimage22.png */; };
 		7AA34FE21DD2F741008112AA /* coorPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AA34FE11DD2F741008112AA /* coorPlugin.m */; };
 		7AA350091DD2F8E1008112AA /* EMScanCodeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AA350071DD2F8E1008112AA /* EMScanCodeController.m */; };
 		7AA3500A1DD2F8E1008112AA /* EMScanCodeController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7AA350081DD2F8E1008112AA /* EMScanCodeController.xib */; };
@@ -171,6 +172,7 @@
 		7A7CF0901DDAEFBC00B305AA /* jpush-ios-2.2.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "jpush-ios-2.2.0.a"; sourceTree = "<group>"; };
 		7A7CF0921DDC328400B305AA /* 3Dimage.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 3Dimage.jpg; sourceTree = "<group>"; };
 		7A7CF0941DDC33D500B305AA /* 3Dimage11@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "3Dimage11@2x.jpg"; sourceTree = "<group>"; };
+		7A7CF0961DDC576A00B305AA /* 3Dimage22.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 3Dimage22.png; sourceTree = "<group>"; };
 		7AA34FE01DD2F741008112AA /* coorPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = coorPlugin.h; sourceTree = "<group>"; };
 		7AA34FE11DD2F741008112AA /* coorPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = coorPlugin.m; sourceTree = "<group>"; };
 		7AA350061DD2F8E1008112AA /* EMScanCodeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMScanCodeController.h; sourceTree = "<group>"; };
@@ -706,6 +708,7 @@
 			children = (
 				7A7CF0921DDC328400B305AA /* 3Dimage.jpg */,
 				7A7CF0941DDC33D500B305AA /* 3Dimage11@2x.jpg */,
+				7A7CF0961DDC576A00B305AA /* 3Dimage22.png */,
 				7A7CF0721DDAE6DD00B305AA /* Bitmap@1x.png */,
 				7A7CF0731DDAE6DD00B305AA /* Bitmap@2x.png */,
 				7A7CF0741DDAE6DD00B305AA /* Bitmap@3x.png */,
@@ -941,6 +944,7 @@
 				7ACF31571D61B6470028577A /* Assets.xcassets in Resources */,
 				7ACF32151D61B6A20028577A /* NewjourneyViewController.xib in Resources */,
 				7AA3500A1DD2F8E1008112AA /* EMScanCodeController.xib in Resources */,
+				7A7CF0971DDC576A00B305AA /* 3Dimage22.png in Resources */,
 				7A7CF0761DDAE6DD00B305AA /* Bitmap@2x.png in Resources */,
 				7AFACB361DD9647100A21F98 /* 返回.png in Resources */,
 				7A01F5181DD5B22C00DC2856 /* imageTest22.png in Resources */,
