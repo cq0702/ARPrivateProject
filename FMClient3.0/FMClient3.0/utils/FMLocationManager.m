@@ -56,7 +56,7 @@
             self.locationManager = [[BMKLocationService alloc] init];
             self.locationManager.delegate = self;
             
-            [BMKLocationService setLocationDistanceFilter:5];//设置最小的更新距离
+            [BMKLocationService setLocationDistanceFilter:0.00001];//设置最小的更新距离
             
             self.geoSearch  = [[BMKGeoCodeSearch alloc]init];
             self.geoSearch.delegate = self;
@@ -139,19 +139,19 @@
     _curlng = [NSNumber numberWithDouble:poi.pt.longitude];
     
     
-    [[NSNotificationCenter defaultCenter]postNotificationName:kManualSelectLocation
-                                                       object:nil
-                                                     userInfo:@{kManualSelectLocation:location}];//获得当前坐标
+//    [[NSNotificationCenter defaultCenter]postNotificationName:kManualSelectLocation
+//                                                       object:nil
+//                                                     userInfo:@{kManualSelectLocation:location}];//获得当前坐标
     
     self.currentAddress = [NSString stringWithFormat:@"当前位置：%@", poi.address];
     self.currentCity    = poi.city;
     
     //添加到本地--适应集成代码
-    [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:UD_LOC_TIME];
-    [[NSUserDefaults standardUserDefaults] setObject:self.currentAddress forKey:UD_CUR_ADDR];
-    [[NSUserDefaults standardUserDefaults] setObject:self.currentCity forKey:UD_CUR_CITY];
-    [[NSUserDefaults standardUserDefaults] setObject:_curlat forKey:UD_CUR_LAT];
-    [[NSUserDefaults standardUserDefaults] setObject:_curlng forKey:UD_CUR_LNG];
+//    [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:UD_LOC_TIME];
+//    [[NSUserDefaults standardUserDefaults] setObject:self.currentAddress forKey:UD_CUR_ADDR];
+//    [[NSUserDefaults standardUserDefaults] setObject:self.currentCity forKey:UD_CUR_CITY];
+//    [[NSUserDefaults standardUserDefaults] setObject:_curlat forKey:UD_CUR_LAT];
+//    [[NSUserDefaults standardUserDefaults] setObject:_curlng forKey:UD_CUR_LNG];
     
     //添加都搜索数组
     [_addressArray insertObject:poi atIndex:0];
@@ -180,9 +180,9 @@
         _curlat = [NSNumber numberWithDouble:coordinate.latitude];
         _curlng = [NSNumber numberWithDouble:coordinate.longitude];
         
-        NSLog(@"didUpdatelat===%@",_curlat);
-        NSLog(@"didUpdatelng===%@",_curlng);
-        NSLog(@"didUpdateBMKUserLocation===%f",userLocation.heading.trueHeading);
+//        NSLog(@"didUpdatelat===%@",_curlat);
+//        NSLog(@"didUpdatelng===%@",_curlng);
+//        NSLog(@"didUpdateBMKUserLocation===%f",userLocation.heading.trueHeading);
         
         
 //        NSString * lng = [NSString stringWithFormat:@"%f",_currentLocation.location.coordinate.longitude];
@@ -194,9 +194,9 @@
                                                            object:nil
                                                          userInfo:@{kCurrentLocation:_currentLocation}];//获得当前坐标
       
-        [[NSUserDefaults standardUserDefaults] setObject:self.currentCity forKey:UD_CUR_CITY];
-        [[NSUserDefaults standardUserDefaults] setObject:_curlat forKey:UD_CUR_LAT];
-        [[NSUserDefaults standardUserDefaults] setObject:_curlng forKey:UD_CUR_LNG];
+//        [[NSUserDefaults standardUserDefaults] setObject:self.currentCity forKey:UD_CUR_CITY];
+//        [[NSUserDefaults standardUserDefaults] setObject:_curlat forKey:UD_CUR_LAT];
+//        [[NSUserDefaults standardUserDefaults] setObject:_curlng forKey:UD_CUR_LNG];
         
         
         //发起反编码请求
@@ -207,15 +207,15 @@
         //定位成功关闭定位
         [self stopLocationService];
         
-        static dispatch_once_t onceToken;
+//        static dispatch_once_t onceToken;
+//        
+//        dispatch_once(&onceToken, ^{
         
-        dispatch_once(&onceToken, ^{
-            
-            [[NSNotificationCenter defaultCenter]postNotificationName:@"ShowAdViewController"
-                                                 object:nil
-                                                 userInfo:nil];//发送弹出广告视图的通知
-            
-        });
+//            [[NSNotificationCenter defaultCenter]postNotificationName:@"ShowAdViewController"
+//                                                 object:nil
+//                                                 userInfo:nil];//发送弹出广告视图的通知
+//            
+//        });
         
         [self loadDriverMeaasege];//加载周边车管家信息
     }
@@ -273,7 +273,7 @@
     //添加--有网络才自动更新
     if (reachManager.networkReachabilityStatus){
         
-        _timer = [NSTimer timerWithTimeInterval:30
+        _timer = [NSTimer timerWithTimeInterval:5
                                        target:self
                                        selector:@selector(autoLocating)
                                        userInfo:nil
@@ -319,9 +319,9 @@
         self.currentCity    = currentCity;
         
         //添加到本地--适应集成代码
-        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:UD_LOC_TIME];
-        [[NSUserDefaults standardUserDefaults] setObject:address forKey:UD_CUR_ADDR];
-        [[NSUserDefaults standardUserDefaults] setObject:addressComponent.city forKey:UD_CUR_CITY];
+//        [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:UD_LOC_TIME];
+//        [[NSUserDefaults standardUserDefaults] setObject:address forKey:UD_CUR_ADDR];
+//        [[NSUserDefaults standardUserDefaults] setObject:addressComponent.city forKey:UD_CUR_CITY];
         
         //添加都搜索数组
         BMKPoiInfo *poi = [[BMKPoiInfo alloc] init];

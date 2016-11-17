@@ -33,6 +33,13 @@
 @property (nonatomic,strong)UITapGestureRecognizer * tapGes;
 
 @property (nonatomic,assign)NSInteger startIndex;
+@property (nonatomic,assign)int tempFromDegree;
+
+@property (nonatomic,assign)int tempDistance;
+@property (nonatomic,assign) CLLocationCoordinate2D myCoordinate;
+
+
+
 
 
 
@@ -56,10 +63,8 @@
     
     //    [self targetImageAnimation];//添加动画
     //
-    //    //位置动画
-    
-    
-    //    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(updateStatue) name:kLoadCurrentLocationSuccess object:nil];
+    //位置动画
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getMyCoordinateValue:) name:kLoadCurrentLocationSuccess object:nil];
     
     
 }
@@ -96,11 +101,12 @@
 
 -(void)addSubViews
 {
-    self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(80, SCREEN_HEIGHT - 450, 150, 150)];
+    self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(100, SCREEN_HEIGHT - 450, 150, 150)];
     [self.readerView addSubview:self.targetImage];
     
     self.targetImage.image = [UIImage imageNamed:@"3Dimage22.png"];
-    self.targetImage.alpha = 0;
+    self.targetImage.alpha = 1;
+    
     
     
         CATransform3D transform = CATransform3DIdentity;
@@ -249,8 +255,15 @@
     //     NSLog(@"Output radians as degrees: %f", RADIANS_TO_DEGREES(targetDegree));
     //     NSLog(@"fromDegree: %f", fromDegree);
     
-    int maxValue = RADIANS_TO_DEGREES(targetDegree) + 8;
-    int minVlaue = RADIANS_TO_DEGREES(targetDegree) - 8;
+    NSInteger marginDegree = 5;
+    NSInteger maginMaxDegree = 20;
+    
+    NSInteger maxValue = RADIANS_TO_DEGREES(targetDegree) + marginDegree;
+    NSInteger minVlaue = RADIANS_TO_DEGREES(targetDegree) - marginDegree;
+    
+    NSInteger marginMaxVlue = RADIANS_TO_DEGREES(targetDegree) + maginMaxDegree;
+    NSInteger marginMinVlue = RADIANS_TO_DEGREES(targetDegree) - maginMaxDegree;
+    
     
     if (fromInt == targetInt ) {//大致方向正确
         if (minVlaue < fromDegree && fromDegree < maxValue) {
@@ -261,68 +274,135 @@
             self.targetImage.alpha = 1;
             if (self.startIndex == 0) {
                 
-                [self targetStartImageAnimation];
+//                [self targetStartImageAnimation];
                
             }else if( self.startIndex == 1){
-                
-                
-                if (_timer != nil) {
-                    [_timer invalidate];
-                    _timer = nil;
-                }
-                _timer = [NSTimer timerWithTimeInterval:1
-                                                 target:self
-                                               selector:@selector(targetImageStatueAction)
-                                               userInfo:nil
-                                                repeats:YES];
-                
-                [[NSRunLoop currentRunLoop] addTimer:_timer forMode:NSRunLoopCommonModes];
+                //距离动画
             }
             
-        }else{
-           self.targetImage.alpha = 0;
+        }else if (fromDegree > marginMinVlue && fromDegree < minVlaue){
+//            NSLog(@"marginMinVlue------");
+            [self moveTargetImageAnimationWith:fromDegree];
+            
+        }else if (fromDegree > maxValue && fromDegree < marginMaxVlue){
+            
+            [self moveTargetImageAnimationWith:fromDegree];
+//            NSLog(@"marginMaxVlue+++++++");
+        }
+
+        else{
+            
+           self.targetImage.alpha = 1;
         }
     }else{
         
-        self.targetImage.alpha = 0;
+        self.targetImage.alpha = 1;
         
     }
 }
-
-//开始出现的动画
--(void)targetStartImageAnimation
+-(void)moveTargetImageAnimationWith:(int)fromDegree
 {
-    self.targetImage.transform = CGAffineTransformMakeScale(0.1, 0.1);
-    [UIView animateWithDuration:0.5   animations:^{
-        
-        self.targetImage.transform = CGAffineTransformMakeScale(0.8, 0.8);
-        
-    }completion:^(BOOL finish){
-        
-        [UIView animateWithDuration:0.5 animations:^{
+    NSInteger value = 10;
+    NSInteger moveValue = 5;
+    
+   __block CGPoint center = self.targetImage.center;
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        if (self.tempFromDegree > fromDegree) {//往右
+            if (center.x > value && center.x < SCREEN_WIDTH - value) {
+                
+                if (center.x < SCREEN_WIDTH - value) {
+                    
+                    center.x += moveValue;
+                }
+                
+            }
+        }else{
             
-            self.targetImage.transform = CGAffineTransformMakeScale(0.5, 0.5);
-            
-        }completion:^(BOOL finish){
-            
-            [UIView animateWithDuration:0.5 animations:^{
+            if (center.x > value && center.x < SCREEN_WIDTH - value) {
                 
-                self.targetImage.transform = CGAffineTransformMakeScale(0.3, 0.3);
+                if (center.x > value) {
+                    
+                    center.x -= moveValue;
+                }
                 
-            }completion:^(BOOL finish){
-                
-                 self.startIndex = 1;
-                
-            }];
-        }];
+            }
+        }
+    } completion:^(BOOL finished) {
+        
+        self.targetImage.center = center;
+        self.tempFromDegree = fromDegree;
+        
     }];
+    
+   
+}
+-(void)getMyCoordinateValue:(NSNotification *)userLocation
+{
+
+    //  121.423552,31.203586    31.16946672086699  121.4102669075268
+    CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
+   
+    if (currentLocation == nil) {
+        return;
+    }
+    CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.203586 longitude:121.423552];
+    // 计算距离
+    CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
+    NSLog(@"currentLocation===%@",currentLocation);
+    NSLog(@"meters===%f",meters);
+    
+    static float angle = 0.3;
+    
+    if (self.tempDistance > meters) {//靠近
+        
+        angle += 0.1f;
+        
+    }else{//远离
+        
+        angle -= 0.1f;
+    }
+    
+    if (angle <= 1.1 && angle > 0.2) {
+        
+        CATransform3D scale = CATransform3DMakeScale(angle, angle, 1);
+        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
+        
+        CATransform3D concat = CATransform3DConcat(rotation, scale);
+        self.targetImage.layer.transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
+        
+        [UIView animateWithDuration:1 animations:^{
+            
+        } completion:^(BOOL finished) {
+            
+            CGPoint center = self.targetImage.center;
+            center.y += 10;
+            
+            self.targetImage .center = center;
+            
+        }];
+    }else if (angle > 1.09)
+    {
+        if (self.tapGes == nil) {
+            
+            //添加手势
+            self.tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
+            
+            [self.targetImage addGestureRecognizer:self.tapGes];
+            self.targetImage.userInteractionEnabled = YES;
+        }
+    }
+    self.tempDistance = meters;
+    
 }
 
 
 
 //模拟位置动画
--(void)targetImageStatueAction
+-(void)diatanceImageFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation
 {
+    NSInteger targetInt = [self getDirectionFromLocation:fromLoaction andTargetLocation:TatgetLocation];
+    
     static float angle = 0.3;
     angle += 0.05f;
     
@@ -384,4 +464,32 @@
     
 }
 
+//开始出现的动画
+-(void)targetStartImageAnimation
+{
+    self.targetImage.transform = CGAffineTransformMakeScale(0.1, 0.1);
+    [UIView animateWithDuration:0.5   animations:^{
+        
+        self.targetImage.transform = CGAffineTransformMakeScale(0.8, 0.8);
+        
+    }completion:^(BOOL finish){
+        
+        [UIView animateWithDuration:0.5 animations:^{
+            
+            self.targetImage.transform = CGAffineTransformMakeScale(0.5, 0.5);
+            
+        }completion:^(BOOL finish){
+            
+            [UIView animateWithDuration:0.5 animations:^{
+                
+                self.targetImage.transform = CGAffineTransformMakeScale(0.3, 0.3);
+                
+            }completion:^(BOOL finish){
+                
+                self.startIndex = 1;
+                
+            }];
+        }];
+    }];
+}
 @end
