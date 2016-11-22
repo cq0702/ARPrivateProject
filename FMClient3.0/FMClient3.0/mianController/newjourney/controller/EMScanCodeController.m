@@ -8,6 +8,8 @@
 
 
 #define RADIANS_TO_DEGREES(radians) ((radians) * (180.0 / M_PI))
+#define IMAGEWIDTH 150
+
 
 #import "EMScanCodeController.h"
 #import "CATransform3DPerspect.h"
@@ -22,21 +24,25 @@
 @property(nonatomic,strong)UIImageView * readLineView;
 
 @property (nonatomic,strong)UIImageView * targetImage;
-@property (nonatomic,strong)UIImageView * eggImage;
-@property (nonatomic,strong)UIImageView * hammerImage;
 
 
 @property (nonatomic,strong)CLLocationManager * locationManager;
 @property (nonatomic,assign)float direction;
 
-@property (nonatomic,strong)NSTimer * timer;
 @property (nonatomic,strong)UITapGestureRecognizer * tapGes;
 
-@property (nonatomic,assign)NSInteger startIndex;
-@property (nonatomic,assign)int tempFromDegree;
+@property (nonatomic,assign)double targetDegree;//活动偏移角度
+@property (nonatomic,assign)double targetRadian;//活动偏移弧度
 
-@property (nonatomic,assign)int tempDistance;
-@property (nonatomic,assign) CLLocationCoordinate2D myCoordinate;
+
+@property (nonatomic,assign) float tempFromDegree;
+@property (nonatomic,assign) float moveTargetDegree;
+
+@property (nonatomic,assign)double targetDistance;//活动距离
+@property (nonatomic,assign)double tempDistance;
+
+@property (nonatomic,assign)NSInteger directionCount;
+
 
 
 
@@ -56,15 +62,12 @@
     
     [self startUpdatesHeading]; //开始指南针
     
-    
     [self addSubViews];
-    
-    
     
     //    [self targetImageAnimation];//添加动画
     //
     //位置动画
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(getMyCoordinateValue:) name:kLoadCurrentLocationSuccess object:nil];
+//    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(makeSureImageCenter) name:kLoadCurrentLocationSuccess object:nil];
     
     
 }
@@ -101,26 +104,81 @@
 
 -(void)addSubViews
 {
-    self.targetImage = [[UIImageView alloc]initWithFrame:CGRectMake(100, SCREEN_HEIGHT - 450, 150, 150)];
+    self.targetImage = [[UIImageView alloc]init];
     [self.readerView addSubview:self.targetImage];
     
     self.targetImage.image = [UIImage imageNamed:@"3Dimage22.png"];
-    self.targetImage.alpha = 0;
     
+    CATransform3D transform = CATransform3DIdentity;
+    transform.m34 = -1/500.0;
     
+    //      CATransform3DMakeRotation(0.78, 1.0, 0.0, 0.0);
     
-        CATransform3D transform = CATransform3DIdentity;
-        transform.m34 = -1/500.0;
-
-//      CATransform3DMakeRotation(0.78, 1.0, 0.0, 0.0);
+    CATransform3D scale = CATransform3DMakeScale(0.3, 0.3, 1);
+    CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
     
-        CATransform3D scale = CATransform3DMakeScale(0.3, 0.3, 1);
-        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
+    CATransform3D concat = CATransform3DConcat(rotation, scale);//X Y轴不能用
+    transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
+    self.targetImage.layer.transform = transform;
     
-        CATransform3D concat = CATransform3DConcat(rotation, scale);//X Y轴不能用
-        transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
-        self.targetImage.layer.transform = transform;
-
+//    [self makeSureImageCenter];
+    
+}
+#pragma mark  ---- 确定活动照片的中心点 ----------
+- (void)makeSureImageCenter
+{
+    //  121.423552,31.203586    31.16946672086699  121.4102669075268
+    CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
+    if (currentLocation != nil) {
+        
+        CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.203586 longitude:121.423552];
+        
+        // 计算距离
+        CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
+        double temoLat = (targetLocation.coordinate.latitude - currentLocation.coordinate.latitude);
+        //    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
+        
+        double lngDistance = (double)fabs(temoLat) * 111320;//两维度之间，相差一度，地理相差111320m
+        
+        self.targetRadian = (double)asin(lngDistance/meters);
+        self.targetDegree = (double)(asin(lngDistance/meters) * (180.0 / M_PI));
+        
+        double imageCenterX = 0;
+        double imageCenterY = 0;
+        
+        
+        self.directionCount = [self getDirectionFromLocation:currentLocation andTargetLocation:targetLocation];
+        self.directionCount = [self getMobileDirectionWith:self.direction];
+        
+        if (self.directionCount == 0) {
+            
+            imageCenterX = SCREEN_WIDTH/2  * (1 + sin(self.targetRadian));
+            imageCenterY = SCREEN_HEIGHT/2 * (1 - cos(self.targetRadian));
+//            NSLog(@"cos(60)===%f",cos(self.targetRadian));
+            
+            
+        }else if (self.directionCount == 1)//
+        {
+            imageCenterX = SCREEN_WIDTH/2  * (1 + cos(self.targetRadian));
+            imageCenterY = SCREEN_HEIGHT/2 * (1 + sin(self.targetRadian));
+        }
+        else if (self.directionCount == 2)//
+        {
+           imageCenterX = SCREEN_WIDTH/2  * (1 - sin(self.targetRadian));
+           imageCenterY = SCREEN_HEIGHT/2 * (1 + cos(self.targetRadian));
+            
+        }else if (self.directionCount == 3)//
+        {
+            imageCenterX = SCREEN_WIDTH/2  * (1 - cos(self.targetRadian));
+            imageCenterY = SCREEN_HEIGHT/2 * (1 - sin(self.targetRadian));
+        }
+        NSLog(@"imageCenterY===%f",imageCenterY);
+        
+        self.targetImage.alpha = 1;
+        self.targetImage.bounds = CGRectMake(0, 0, IMAGEWIDTH, IMAGEWIDTH);
+        self.targetImage.center = CGPointMake(imageCenterX, imageCenterY);
+        
+    }
 }
 -(void)handlePinch:(UITapGestureRecognizer *)recognizer
 {
@@ -130,59 +188,10 @@
     
 }
 
-#pragma mark 初始化扫描 更新
-- (void)InitScan
-{
-    [ZBarReaderView class];
-    self.readerView = [ZBarReaderView new];
-    self.readerView.frame = self.view.bounds;
-    self.readerView.backgroundColor = [UIColor clearColor];
-//    self.readerView.layer.contents  = (id)[UIImage imageNamed:@"scanBg_icon.png"];
-    self.readerView.alpha = 1;
-    
-    self.readerView.allowsPinchZoom = NO;//使用手势变焦
-    
-    //  self.readerView.showsFPS = YES;// 显示帧率  YES 显示  NO 不显示 不能设置yes 返回会报错
-    self.readerView.torchMode = 0;          // 0 表示关闭闪光灯，1表示打开
-    self.readerView.tracksSymbols = NO;     // Can not show trace marker
-    
-    self.readerView.trackingColor = [UIColor clearColor];
-    self.readerView.readerDelegate = self;
-    
-    //设定扫描的类型，QR
-    ZBarImageScanner *scanner = self.readerView.scanner;
-    [scanner setSymbology:0 config:ZBAR_CFG_MAX_LEN to:0];
-    
-    
-    //处理模拟器
-    if(TARGET_IPHONE_SIMULATOR) {
-        ZBarCameraSimulator* cameraSimulator = [[ZBarCameraSimulator alloc] initWithViewController:self];
-        cameraSimulator.readerView = self.readerView;
-        
-    }
-    [self.readerView addSubview:_scanZomeBack];
-    [self.view addSubview:self.readerView];
-    [self.readerView start];
-    
-    self.readerView.scanCrop = self.view.bounds;
-    
-}
-
 - (void)startUpdatesHeading
 {
     
     if ([CLLocationManager headingAvailable]) {
-        //创建显示方向的指南针Layer
-        //        CALayer * znzLayer = [[CALayer alloc]init];
-        //        NSInteger screenHeight = [UIScreen mainScreen].bounds.size.height;
-        //        NSInteger screenWidth = [UIScreen mainScreen].bounds.size.width;
-        //        NSInteger y = (screenHeight - 320)/2;
-        //        NSInteger x = (screenWidth - 320)/2;
-        //        znzLayer.frame = CGRectMake(x, y, 320, 320);
-        //
-        //        znzLayer.contents = (id)[[UIImage imageNamed:@"znz.png"]CGImage];
-        //
-        //        [self.view.layer addSublayer:znzLayer];
         
         self.locationManager = [[CLLocationManager alloc]init];
         self.locationManager.delegate = self;
@@ -192,9 +201,7 @@
         
         //        NSLog(@"设备不支持磁力计");
     }
-    
 }
-
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
@@ -221,130 +228,167 @@
         
         self.direction = direction;
         
-        //        NSLog(@"startUpdatesHeading ：%lf==== %lf",d,direction);
+        
         // Do something with the event data.
         
-        [self updateStatue];
+//        [self updateHeadingDirection];
+        
+        NSLog(@"startUpdatesHeading ：%lf==== %lf",d,direction);
+//        [self moveTargetImageAnimationWith:direction];
+        
+        [self makeSureImageCenter];
     }
 }
--(void)updateStatue
+#pragma mark ----- 指南针指向 ------
+-(void)updateHeadingDirection
 {
-    //  121.423552,31.203586    31.16946672086699  121.4102669075268
-    CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
-    if (currentLocation == nil) {
-        return;
+    double targetDegreeValue = self.targetDegree + self.directionCount * 90;
+    double degreeMarginValue = fabs(targetDegreeValue - self.direction);
+    NSLog(@"degreeMarginValue === %lf",degreeMarginValue);
+    
+    if (degreeMarginValue <= 180) {
+        
+        self.targetImage.alpha = 1;
+        
+    }else{
+        
+        self.targetImage.alpha = 1;
     }
-    CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.203586 longitude:121.423552];
     
-    
-    // 计算距离
-    CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
-    double temoLat = (targetLocation.coordinate.latitude - currentLocation.coordinate.latitude);
-    //    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
-    
-    double lngDistance = (double)fabs(temoLat) * 111320;//两维度之间，相差一度，地理相差111320m
-    
-    double targetDegree = (double)asin(lngDistance/meters);
-    
-    NSInteger targetInt = [self getDirectionFromLocation:currentLocation andTargetLocation:targetLocation];
-    
-    //判断方向
-    NSInteger fromInt = self.direction / 90;
-    int fromDegree = (int)self.direction % 90;
-    
-    //     NSLog(@"Output radians as degrees: %f", RADIANS_TO_DEGREES(targetDegree));
-    //     NSLog(@"fromDegree: %f", fromDegree);
-    
-    NSInteger marginDegree = 5;
-    NSInteger maginMaxDegree = 20;
-    
-    NSInteger maxValue = RADIANS_TO_DEGREES(targetDegree) + marginDegree;
-    NSInteger minVlaue = RADIANS_TO_DEGREES(targetDegree) - marginDegree;
-    
-    NSInteger marginMaxVlue = RADIANS_TO_DEGREES(targetDegree) + maginMaxDegree;
-    NSInteger marginMinVlue = RADIANS_TO_DEGREES(targetDegree) - maginMaxDegree;
-    
-    
-    if (fromInt == targetInt ) {//大致方向正确
-        if (minVlaue < fromDegree && fromDegree < maxValue) {
-            
-            //图片出现
-            NSLog(@"图片该出现了......");
-            
-            self.targetImage.alpha = 1;
-            if (self.startIndex == 0) {
-                
-//                [self targetStartImageAnimation];
-               
-            }else if( self.startIndex == 1){
-                //距离动画
-            }
-            
-        }else if (fromDegree > marginMinVlue && fromDegree < minVlaue){
-//            NSLog(@"marginMinVlue------");
-            self.targetImage.alpha = 1;
-            [self moveTargetImageAnimationWith:fromDegree];
-            
-        }else if (fromDegree > maxValue && fromDegree < marginMaxVlue){
-            
-            self.targetImage.alpha = 1;
-            [self moveTargetImageAnimationWith:fromDegree];
-//            NSLog(@"marginMaxVlue+++++++");
-        }
+    [self moveTargetImageAnimationWith:self.direction];
 
-        else{
+}
+#pragma mark ---- 图片移动动画 -----
+-(void)moveTargetImageAnimationWith:(float)fromDegree
+{
+    NSInteger fromIndex = 0;
+   
+    
+    NSInteger moveValue = (SCREEN_WIDTH + IMAGEWIDTH)/90;
+    
+    CGPoint center = self.targetImage.center;
+    if (self.tempFromDegree > fromDegree) {//手机往左
+        
+        self.moveTargetDegree = self.targetDegree + self.tempFromDegree - fromDegree;
+        
+        if (center.x < SCREEN_WIDTH + 75) {//活动图片向右
             
-           self.targetImage.alpha = 0;
+            center.x += moveValue;
         }
     }else{
         
-        self.targetImage.alpha = 0;
-        
-    }
-}
--(void)moveTargetImageAnimationWith:(int)fromDegree
-{
-    NSInteger value = 10;
-    NSInteger moveValue = 5;
-    
-   __block CGPoint center = self.targetImage.center;
-    
-    [UIView animateWithDuration:0.5 animations:^{
-        if (self.tempFromDegree > fromDegree) {//往右
-            if (center.x > value && center.x < SCREEN_WIDTH - value) {
-                
-                if (center.x < SCREEN_WIDTH - value) {
-                    
-                    center.x += moveValue;
-                }
-                
-            }
-        }else{
+        self.moveTargetDegree = self.targetDegree - self.tempFromDegree + fromDegree;
+        if (center.x > -75) {
             
-            if (center.x > value && center.x < SCREEN_WIDTH - value) {
-                
-                if (center.x > value) {
-                    
-                    center.x -= moveValue;
-                }
-                
-            }
+            center.x -= moveValue;
         }
-    } completion:^(BOOL finished) {
-        
-        self.targetImage.center = center;
-        self.tempFromDegree = fromDegree;
-        
-    }];
+    }
     
-   
+    self.tempFromDegree   = fromDegree;
+//    
+//    self.moveTargetDegree = self.targetDegree + self.tempFromDegree - fromDegree;
+//    NSLog(@"start::::::self.tempFromDegree- fromDegree===%lf",self.tempFromDegree- fromDegree);
+//    NSLog(@"moveTargetDegree===%lf",self.moveTargetDegree);
+//    self.tempFromDegree   = fromDegree;
+//    
+//    if (self.moveTargetDegree >= 0 && self.moveTargetDegree <= 90) {
+//        fromIndex = 0;
+//    }else if (self.moveTargetDegree > 90 && self.moveTargetDegree <= 180)
+//    {
+//        fromIndex = 1;
+//    }else if (self.moveTargetDegree > 180 && self.moveTargetDegree <= 270)
+//    {
+//        fromIndex = 2;
+//    }else if (self.moveTargetDegree > 270 && self.moveTargetDegree <= 360)
+//    {
+//        fromIndex = 3;
+//    }
+//    
+//    
+//    double moveTargetRadian = self.moveTargetDegree * M_PI/180;
+//    
+//    if (fromIndex == 0) {
+//        
+//        center.x = SCREEN_WIDTH/2  * (1 + sin(moveTargetRadian));
+//        center.y = SCREEN_HEIGHT/2 * (1 - cos(moveTargetRadian));
+//        //            NSLog(@"cos(60)===%f",cos(self.targetRadian));
+//        
+//    }else if (fromIndex == 1)//
+//    {
+//        center.x = SCREEN_WIDTH/2  * (1 + cos(moveTargetRadian));
+//        center.y = SCREEN_HEIGHT/2 * (1 + sin(moveTargetRadian));
+//    }
+//    else if (fromIndex == 2)//
+//    {
+//        center.x = SCREEN_WIDTH/2  * (1 - sin(moveTargetRadian));
+//        center.y = SCREEN_HEIGHT/2 * (1 + cos(moveTargetRadian));
+//        
+//    }else if (fromIndex == 3)//
+//    {
+//        center.x = SCREEN_WIDTH/2  * (1 - cos(moveTargetRadian));
+//        center.y = SCREEN_HEIGHT/2 * (1 - sin(moveTargetRadian));
+//    }
+    
+//    NSLog(@"imageCenterY===%f andImageCenterx===%f",center.y,center.x);
+    self.targetImage.center = center;
+    
 }
--(void)getMyCoordinateValue:(NSNotification *)userLocation
-{
 
+#pragma mark -------- 计算活动照片是否变大 -----------
+-(void)changeTargetImageSizeWithDiatance:(double)targetDistance
+{
+    
+    static float angle = 0.3;
+    
+    if (self.tempDistance > targetDistance) {//靠近
+        
+        angle += 0.1f;
+        
+    }else{//远离
+        
+        angle -= 0.1f;
+    }
+    
+    if (angle <= 1.1 && angle > 0.2) {
+        
+        CATransform3D scale = CATransform3DMakeScale(angle, angle, 1);
+        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
+        
+        CATransform3D concat = CATransform3DConcat(rotation, scale);
+        self.targetImage.layer.transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
+        
+        [UIView animateWithDuration:1 animations:^{
+            
+        } completion:^(BOOL finished) {
+            
+            CGPoint center = self.targetImage.center;
+            center.y += 10;
+            
+            self.targetImage .center = center;
+            
+        }];
+    }else if (angle > 1.09)
+    {
+        if (self.tapGes == nil) {
+            
+            //添加手势
+            self.tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
+            
+            [self.targetImage addGestureRecognizer:self.tapGes];
+            self.targetImage.userInteractionEnabled = YES;
+        }
+    }
+    self.tempDistance = targetDistance;
+    
+}
+
+#pragma mark ---- 模拟定位，图片放大缩小 ---------
+-(void)simulateChangeTargetImageSize
+{
+    
     //  121.423552,31.203586    31.16946672086699  121.4102669075268
     CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
-   
+    
     if (currentLocation == nil) {
         return;
     }
@@ -353,6 +397,9 @@
     CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
     NSLog(@"currentLocation===%@",currentLocation);
     NSLog(@"meters===%f",meters);
+    
+    
+    
     
     static float angle = 0.3;
     
@@ -398,12 +445,9 @@
     
 }
 
-
-
 //模拟位置动画
 -(void)diatanceImageFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation
 {
-    NSInteger targetInt = [self getDirectionFromLocation:fromLoaction andTargetLocation:TatgetLocation];
     
     static float angle = 0.3;
     angle += 0.05f;
@@ -440,7 +484,7 @@
     }
 }
 
-//判断大致的方向问题
+#pragma mark ------ //判断大致的方向问题 ---------
 -(NSInteger)getDirectionFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation
 {
     double fromLng = fromLoaction.coordinate.longitude;
@@ -465,6 +509,25 @@
     }
     
 }
+#pragma mark  ----------  判断手机的当前指向 --------
+-(NSInteger)getMobileDirectionWith:(float)direction
+{
+    if (direction >= 0 && direction <= 90) {
+        return  0;
+    }else if (direction > 90 && direction <= 180)
+    {
+        return   1;
+    }else if (direction > 180 && direction <= 270)
+    {
+        return  2;
+    }else if (direction > 270 && direction <= 360)
+    {
+        return   3;
+    }else
+    {
+        return 0;
+    }
+}
 
 //开始出现的动画
 -(void)targetStartImageAnimation
@@ -488,10 +551,52 @@
                 
             }completion:^(BOOL finish){
                 
-                self.startIndex = 1;
+//                self.startIndex = 1;
                 
             }];
         }];
     }];
+}
+
+#pragma mark 初始化扫描 更新
+- (void)InitScan
+{
+    [ZBarReaderView class];
+    self.readerView = [ZBarReaderView new];
+    self.readerView.frame = self.view.bounds;
+    self.readerView.backgroundColor = [UIColor clearColor];
+    //    self.readerView.layer.contents  = (id)[UIImage imageNamed:@"scanBg_icon.png"];
+    self.readerView.alpha = 1;
+    
+    self.readerView.allowsPinchZoom = NO;//使用手势变焦
+    
+    //  self.readerView.showsFPS = YES;// 显示帧率  YES 显示  NO 不显示 不能设置yes 返回会报错
+    self.readerView.torchMode = 0;          // 0 表示关闭闪光灯，1表示打开
+    self.readerView.tracksSymbols = NO;     // Can not show trace marker
+    
+    self.readerView.trackingColor = [UIColor clearColor];
+    self.readerView.readerDelegate = self;
+    
+    //设定扫描的类型，QR
+    ZBarImageScanner *scanner = self.readerView.scanner;
+    [scanner setSymbology:0 config:ZBAR_CFG_MAX_LEN to:0];
+    
+    
+    //处理模拟器
+    if(TARGET_IPHONE_SIMULATOR) {
+        ZBarCameraSimulator* cameraSimulator = [[ZBarCameraSimulator alloc] initWithViewController:self];
+        cameraSimulator.readerView = self.readerView;
+        
+    }
+    [self.readerView addSubview:_scanZomeBack];
+    [self.view addSubview:self.readerView];
+    [self.readerView start];
+    
+    self.readerView.scanCrop = self.view.bounds;
+    
+}
+-(void)readerView:(ZBarReaderView *)readerView didReadSymbols:(ZBarSymbolSet *)symbols fromImage:(UIImage *)image
+{
+    
 }
 @end

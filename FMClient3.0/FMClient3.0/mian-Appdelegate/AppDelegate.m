@@ -19,9 +19,10 @@
 #import <UserNotifications/UserNotifications.h>
 #endif
 
-#define BAIDUKEY @"uGIwfMfh0s5bEB1dqLGW5GtAji7QGa4D"
-#define JPUSHKEY @"9ed57edb8e98854f2f51fbf3"
-#define JPUSHMasterKey @"1a222686624079c7810ec297"
+#define UMENGKEY @"58339bef1c5dd01208000496"
+#define BAIDUKEY @"HQ6XUijIs4wlsn5usftDGzisAc0CagY6"
+#define JPUSHKEY @"0afde7804ad9163a1df4ae23"
+#define JPUSHMasterKey @"c2c52dba6bcbe3e128cf22db"
 
 @interface AppDelegate ()<JPUSHRegisterDelegate>
 

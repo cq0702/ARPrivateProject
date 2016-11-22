@@ -5,6 +5,7 @@
 //  Created by will on 15/8/10.
 //  Copyright (c) 2015年 FM. All rights reserved.
 //
+#define PERMINLOCSATE 10
 
 #import "FMLocationManager.h"
 #import "AFNetworkReachabilityManager.h"
@@ -172,6 +173,8 @@
     //定位成功
     if (userLocation != nil) {
         _currentLocation     = userLocation;
+        self.currentLocation = userLocation;
+        
 
         CLLocation *location = userLocation.location;
         CLLocationCoordinate2D coordinate= location.coordinate;
@@ -183,10 +186,6 @@
 //        NSLog(@"didUpdatelat===%@",_curlat);
 //        NSLog(@"didUpdatelng===%@",_curlng);
 //        NSLog(@"didUpdateBMKUserLocation===%f",userLocation.heading.trueHeading);
-        
-        
-//        NSString * lng = [NSString stringWithFormat:@"%f",_currentLocation.location.coordinate.longitude];
-//        NSString * lat = [NSString stringWithFormat:@"%f",_currentLocation.location.coordinate.latitude];
         
        
         
@@ -217,7 +216,7 @@
 //            
 //        });
         
-        [self loadDriverMeaasege];//加载周边车管家信息
+//        [self loadDriverMeaasege];//加载周边车管家信息
     }
 
 }
@@ -273,7 +272,7 @@
     //添加--有网络才自动更新
     if (reachManager.networkReachabilityStatus){
         
-        _timer = [NSTimer timerWithTimeInterval:5
+        _timer = [NSTimer timerWithTimeInterval:PERMINLOCSATE
                                        target:self
                                        selector:@selector(autoLocating)
                                        userInfo:nil
@@ -426,9 +425,9 @@
 }
 
 #pragma mark 加载车管家所有信息
--(void)loadDriverMeaasege
-{
-}
+//-(void)loadDriverMeaasege
+//{
+//}
 -(void)dealloc
 {
     [_locationManager stopUserLocationService];

@@ -18,7 +18,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.navigationItem.title = @"飞马星";
     self.view.backgroundColor = [UIColor whiteColor];
 
 }
