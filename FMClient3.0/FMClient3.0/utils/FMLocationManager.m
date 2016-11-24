@@ -85,9 +85,6 @@
             UIAlertView *alertView = [[UIAlertView alloc]initWithTitle:@"提示" message:@"定位不成功 ,请确认开启定位" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
             [alertView show];
         }
-        
-        
-//        BMKUserTrackingModeFollow
     }
     return self;
 }
@@ -147,12 +144,6 @@
     self.currentAddress = [NSString stringWithFormat:@"当前位置：%@", poi.address];
     self.currentCity    = poi.city;
     
-    //添加到本地--适应集成代码
-//    [[NSUserDefaults standardUserDefaults] setObject:[NSDate date] forKey:UD_LOC_TIME];
-//    [[NSUserDefaults standardUserDefaults] setObject:self.currentAddress forKey:UD_CUR_ADDR];
-//    [[NSUserDefaults standardUserDefaults] setObject:self.currentCity forKey:UD_CUR_CITY];
-//    [[NSUserDefaults standardUserDefaults] setObject:_curlat forKey:UD_CUR_LAT];
-//    [[NSUserDefaults standardUserDefaults] setObject:_curlng forKey:UD_CUR_LNG];
     
     //添加都搜索数组
     [_addressArray insertObject:poi atIndex:0];
@@ -220,24 +211,26 @@
     }
 
 }
-//-(void)didUpdateUserHeading:(BMKUserLocation *)userLocation
-//{
-//    [self setUserHeading:userLocation];
-//    
-//}
-//-(void) setUserHeading:(BMKUserLocation*)userHeading {
-//    
-//    if(nil == userHeading || nil == userHeading.heading
-//       || userHeading.heading.headingAccuracy < 0) {
-//        return;
-//    }
-//    
-//    CLLocationDirection  theHeading = userHeading.heading.magneticHeading;
-//    double d = 360 - theHeading;
-//    
-//    float direction = theHeading;
-//    
-//    NSLog(@"didUpdateUserHeading：======  %lf==== %lf",d,direction);
+-(void)didUpdateUserHeading:(BMKUserLocation *)userLocation
+{
+    [self setUserHeading:userLocation];
+    
+}
+-(void) setUserHeading:(BMKUserLocation*)userHeading {
+    
+    if(nil == userHeading || nil == userHeading.heading
+       || userHeading.heading.headingAccuracy < 0) {
+        return;
+    }
+    
+    CLLocationDirection  theHeading = userHeading.heading.magneticHeading;
+    double d = 360 - theHeading;
+    
+    float direction = theHeading;
+    self.direction = direction;
+    
+    
+    NSLog(@"didUpdateUserHeading：======  %lf==== %lf",d,direction);
 //    if(nil != myLocationAnnotationView) {
 //        if (direction > 180)
 //        {
@@ -249,7 +242,7 @@
 //        }
 //        myLocationAnnotationView.image = [myLocationImage imageRotatedByDegrees:-direction];
 //    }
-//}
+}
 #pragma mark 设置持续定位
 - (void)autoLocating
 {

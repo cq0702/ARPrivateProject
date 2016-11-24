@@ -61,7 +61,6 @@
     //       self.window.rootViewController = addCtrl;
     
     //    }else{
-    //
     //        //设置windows根视
     self.window.rootViewController = tabController;
 

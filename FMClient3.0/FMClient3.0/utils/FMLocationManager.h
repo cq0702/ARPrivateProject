@@ -26,6 +26,9 @@
 
 @property(nonatomic,assign)BOOL isUserAssigned; //是否用户指定位置
 
+@property (nonatomic,assign)float direction;
+
+
 +(instancetype)sharedManager;
 
 -(void)startLocationService;

@@ -41,7 +41,7 @@
 @property (nonatomic,assign)double targetDistance;//活动距离
 @property (nonatomic,assign)double tempDistance;
 
-@property (nonatomic,assign)NSInteger directionCount;
+@property (nonatomic,assign)NSInteger targetCount;
 
 
 
@@ -63,6 +63,8 @@
     [self startUpdatesHeading]; //开始指南针
     
     [self addSubViews];
+    
+//    [self makeSureImageCenter];
     
     //    [self targetImageAnimation];//添加动画
     //
@@ -109,6 +111,8 @@
     
     self.targetImage.image = [UIImage imageNamed:@"3Dimage22.png"];
     
+    self.targetImage.frame = CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, IMAGEWIDTH, IMAGEWIDTH);
+    
     CATransform3D transform = CATransform3DIdentity;
     transform.m34 = -1/500.0;
     
@@ -121,64 +125,100 @@
     transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
     self.targetImage.layer.transform = transform;
     
-//    [self makeSureImageCenter];
+    [self makeSureImageCenter];//默认手机当前方向朝北
+    
+    CGFloat fromDirection = [FMLocationManager sharedManager].direction;
+    [self changeTargetImageStationWithMobileDirection:fromDirection];
+    
     
 }
-#pragma mark  ---- 确定活动照片的中心点 ----------
+#pragma mark  ---- 确定当前与活动点的相对真实位置 ----------
 - (void)makeSureImageCenter
 {
     //  121.423552,31.203586    31.16946672086699  121.4102669075268
     CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
+    
     if (currentLocation != nil) {
         
-        CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.203586 longitude:121.423552];
+        CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.16 longitude:121.41];
         
         // 计算距离
         CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
         double temoLat = (targetLocation.coordinate.latitude - currentLocation.coordinate.latitude);
-        //    double temoLng = (targetLocation.coordinate.longitude - currentLocation.coordinate.longitude);
         
         double lngDistance = (double)fabs(temoLat) * 111320;//两维度之间，相差一度，地理相差111320m
         
+        if (meters < lngDistance) {
+            meters = lngDistance;
+        }
+//        if (lngDistance < 1) {
+//            lngDistance = 1;
+//        }
         self.targetRadian = (double)asin(lngDistance/meters);
-        self.targetDegree = (double)(asin(lngDistance/meters) * (180.0 / M_PI));
+        self.targetDegree = (double)(asin(lngDistance/meters) * (180.0 / M_PI));//活动地点的位置角度
         
-        double imageCenterX = 0;
-        double imageCenterY = 0;
+        self.targetCount = [self getDirectionFromLocation:currentLocation andTargetLocation:targetLocation];
         
-        
-        self.directionCount = [self getDirectionFromLocation:currentLocation andTargetLocation:targetLocation];
-        self.directionCount = [self getMobileDirectionWith:self.direction];
-        
-        if (self.directionCount == 0) {
-            
-            imageCenterX = SCREEN_WIDTH/2  * (1 + sin(self.targetRadian));
-            imageCenterY = SCREEN_HEIGHT/2 * (1 - cos(self.targetRadian));
-//            NSLog(@"cos(60)===%f",cos(self.targetRadian));
-            
-            
-        }else if (self.directionCount == 1)//
-        {
-            imageCenterX = SCREEN_WIDTH/2  * (1 + cos(self.targetRadian));
-            imageCenterY = SCREEN_HEIGHT/2 * (1 + sin(self.targetRadian));
-        }
-        else if (self.directionCount == 2)//
-        {
-           imageCenterX = SCREEN_WIDTH/2  * (1 - sin(self.targetRadian));
-           imageCenterY = SCREEN_HEIGHT/2 * (1 + cos(self.targetRadian));
-            
-        }else if (self.directionCount == 3)//
-        {
-            imageCenterX = SCREEN_WIDTH/2  * (1 - cos(self.targetRadian));
-            imageCenterY = SCREEN_HEIGHT/2 * (1 - sin(self.targetRadian));
-        }
-        NSLog(@"imageCenterY===%f",imageCenterY);
-        
-        self.targetImage.alpha = 1;
-        self.targetImage.bounds = CGRectMake(0, 0, IMAGEWIDTH, IMAGEWIDTH);
-        self.targetImage.center = CGPointMake(imageCenterX, imageCenterY);
         
     }
+}
+#pragma mark ----  随着手机指向改变手机的位置 --------
+-(void)changeTargetImageStationWithMobileDirection:(CGFloat)mobileDirection
+{
+    
+    CGFloat marginDegree = self.targetDegree + self.targetCount * 90 - mobileDirection;
+    if (marginDegree <= 0) {
+        marginDegree = marginDegree + 360;
+    }
+    
+    
+    NSInteger maginIndex = marginDegree/90;
+    CGFloat marginRadian = (marginDegree - maginIndex * 90) * M_PI/180;
+    
+    CGPoint center = self.targetImage.center;
+    CGFloat cenerX  = 0;
+    CGFloat centerY = 0;
+    CGFloat widthX  =  SCREEN_WIDTH/2 - 20;
+    
+    
+    if (maginIndex == 0) {
+        
+        cenerX =  widthX * (1 + sin(marginRadian));
+        centerY = (SCREEN_HEIGHT - 113)/2 - widthX * cos(marginRadian);
+        
+    }else if (maginIndex == 1){
+        
+        
+        cenerX = widthX  * (1 + cos(marginRadian));
+        centerY = (SCREEN_HEIGHT - 0)/2 + widthX *  sin(marginRadian);
+        
+    }else if (maginIndex == 2){
+        
+        cenerX  = widthX  * (1 - sin(marginRadian));
+        centerY = (SCREEN_HEIGHT - 0)/2 + widthX * cos(marginRadian);
+        
+    }else if (maginIndex == 3){
+        
+        cenerX = widthX  * (1 - cos(marginRadian));
+        centerY = (SCREEN_HEIGHT - 113)/2 -  widthX * sin(marginRadian);
+    }
+    if (cenerX && centerY) {
+        
+        center.x = cenerX;
+        center.y = centerY;
+    }
+//   NSLog(@" maginIndex===%ld", maginIndex);
+//    NSLog(@"cenerX===%f",cenerX);
+//    NSLog(@"cenerY===%f",centerY);
+    if (centerY < (SCREEN_HEIGHT - 113)/2) {
+        self.targetImage.alpha = 1;
+    }else
+    {
+        self.targetImage.alpha = 0;
+    }
+    self.targetImage.center = center;
+    
+    
 }
 -(void)handlePinch:(UITapGestureRecognizer *)recognizer
 {
@@ -233,16 +273,19 @@
         
 //        [self updateHeadingDirection];
         
-        NSLog(@"startUpdatesHeading ：%lf==== %lf",d,direction);
-//        [self moveTargetImageAnimationWith:direction];
+//        NSLog(@"startUpdatesHeading ：%lf==== %lf",d,direction);
+//        
+//         [self moveTargetImageAnimationWith:direction];
         
-        [self makeSureImageCenter];
+        [self changeTargetImageStationWithMobileDirection:direction];
+        
+        
     }
 }
 #pragma mark ----- 指南针指向 ------
 -(void)updateHeadingDirection
 {
-    double targetDegreeValue = self.targetDegree + self.directionCount * 90;
+    double targetDegreeValue = self.targetDegree + self.targetCount * 90;
     double degreeMarginValue = fabs(targetDegreeValue - self.direction);
     NSLog(@"degreeMarginValue === %lf",degreeMarginValue);
     
@@ -495,8 +538,11 @@
     
     if (targetLat > fromLat) {
         if (targetLng > fromLng) {
+            
             return 0;
+            
         }else{
+            
             return 3;
         }
     }else{
