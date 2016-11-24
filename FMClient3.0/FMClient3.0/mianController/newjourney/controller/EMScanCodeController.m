@@ -43,10 +43,7 @@
 
 @property (nonatomic,assign)NSInteger targetCount;
 
-
-
-
-
+@property (nonatomic,assign)NSInteger schleCount;
 
 
 @end
@@ -68,8 +65,12 @@
     
     //    [self targetImageAnimation];//添加动画
     //
-    //位置动画
+    //位置动画 10 秒执行一次，改变一次距离
 //    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(makeSureImageCenter) name:kLoadCurrentLocationSuccess object:nil];
+    
+    
+    [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(schleChangeDistance) userInfo:nil repeats:YES];
+    self.schleCount = 1;
     
     
 }
@@ -111,14 +112,15 @@
     
     self.targetImage.image = [UIImage imageNamed:@"3Dimage22.png"];
     
-    self.targetImage.frame = CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, IMAGEWIDTH, IMAGEWIDTH);
+    self.targetImage.bounds = CGRectMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, IMAGEWIDTH, IMAGEWIDTH);
+    self.targetImage.center = CGPointMake(0, 100);
     
     CATransform3D transform = CATransform3DIdentity;
     transform.m34 = -1/500.0;
     
     //      CATransform3DMakeRotation(0.78, 1.0, 0.0, 0.0);
     
-    CATransform3D scale = CATransform3DMakeScale(0.3, 0.3, 1);
+    CATransform3D scale = CATransform3DMakeScale(0.2, 0.2, 1);
     CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
     
     CATransform3D concat = CATransform3DConcat(rotation, scale);//X Y轴不能用
@@ -159,8 +161,60 @@
         
         self.targetCount = [self getDirectionFromLocation:currentLocation andTargetLocation:targetLocation];
         
+    }
+}
+-(void)schleChangeDistance
+{
+    NSArray * distance = @[@100,@200, @300, @100,@400,@500];
+    NSNumber * number  = distance[self.schleCount];
+    
+    CGFloat distanceValue = number.floatValue;
+    
+    [self changeTargetImageCenterYWithDistance:distanceValue];
+    if (self.schleCount <= 4) {
+        
+        self.schleCount += 1;
+    }
+    
+}
+-(void)changeTargetImageCenterYWithDistance:(CGFloat)targetDiatance
+{
+    CGFloat scaleValue = 0.2;
+    
+    scaleValue = targetDiatance/500;
+    
+    
+    
+    if (scaleValue == 1) {
+        
+        UITapGestureRecognizer * tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
+        [self.targetImage addGestureRecognizer:tapGes];
+        self.targetImage.userInteractionEnabled = YES;
         
     }
+    CGPoint center = self.targetImage.center;
+    center.y = targetDiatance;
+    
+    
+    CATransform3D transform = CATransform3DIdentity;
+    transform.m34 = -1/500.0;
+    
+    //      CATransform3DMakeRotation(0.78, 1.0, 0.0, 0.0);
+    
+    CATransform3D scale = CATransform3DMakeScale(scaleValue, scaleValue, 1);
+    CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
+    
+    CATransform3D concat = CATransform3DConcat(rotation, scale);//X Y轴不能用
+    transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
+    
+    
+    [UIView animateWithDuration:2 animations:^{
+        
+        self.targetImage.center = center;
+       self.targetImage.layer.transform = transform;
+        
+    }];
+    
 }
 #pragma mark ----  随着手机指向改变手机的位置 --------
 -(void)changeTargetImageStationWithMobileDirection:(CGFloat)mobileDirection
@@ -178,7 +232,7 @@
     CGPoint center = self.targetImage.center;
     CGFloat cenerX  = 0;
     CGFloat centerY = 0;
-    CGFloat widthX  =  SCREEN_WIDTH/2 - 20;
+    CGFloat widthX  =  SCREEN_WIDTH/2;
     
     
     if (maginIndex == 0) {
@@ -187,7 +241,6 @@
         centerY = (SCREEN_HEIGHT - 113)/2 - widthX * cos(marginRadian);
         
     }else if (maginIndex == 1){
-        
         
         cenerX = widthX  * (1 + cos(marginRadian));
         centerY = (SCREEN_HEIGHT - 0)/2 + widthX *  sin(marginRadian);
@@ -205,7 +258,7 @@
     if (cenerX && centerY) {
         
         center.x = cenerX;
-        center.y = centerY;
+//        center.y = centerY;
     }
 //   NSLog(@" maginIndex===%ld", maginIndex);
 //    NSLog(@"cenerX===%f",cenerX);
@@ -287,7 +340,7 @@
 {
     double targetDegreeValue = self.targetDegree + self.targetCount * 90;
     double degreeMarginValue = fabs(targetDegreeValue - self.direction);
-    NSLog(@"degreeMarginValue === %lf",degreeMarginValue);
+//    NSLog(@"degreeMarginValue === %lf",degreeMarginValue);
     
     if (degreeMarginValue <= 180) {
         
@@ -426,106 +479,106 @@
 }
 
 #pragma mark ---- 模拟定位，图片放大缩小 ---------
--(void)simulateChangeTargetImageSize
-{
-    
-    //  121.423552,31.203586    31.16946672086699  121.4102669075268
-    CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
-    
-    if (currentLocation == nil) {
-        return;
-    }
-    CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.203586 longitude:121.423552];
-    // 计算距离
-    CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
-    NSLog(@"currentLocation===%@",currentLocation);
-    NSLog(@"meters===%f",meters);
-    
-    
-    
-    
-    static float angle = 0.3;
-    
-    if (self.tempDistance > meters) {//靠近
-        
-        angle += 0.1f;
-        
-    }else{//远离
-        
-        angle -= 0.1f;
-    }
-    
-    if (angle <= 1.1 && angle > 0.2) {
-        
-        CATransform3D scale = CATransform3DMakeScale(angle, angle, 1);
-        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
-        
-        CATransform3D concat = CATransform3DConcat(rotation, scale);
-        self.targetImage.layer.transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
-        
-        [UIView animateWithDuration:1 animations:^{
-            
-        } completion:^(BOOL finished) {
-            
-            CGPoint center = self.targetImage.center;
-            center.y += 10;
-            
-            self.targetImage .center = center;
-            
-        }];
-    }else if (angle > 1.09)
-    {
-        if (self.tapGes == nil) {
-            
-            //添加手势
-            self.tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
-            
-            [self.targetImage addGestureRecognizer:self.tapGes];
-            self.targetImage.userInteractionEnabled = YES;
-        }
-    }
-    self.tempDistance = meters;
-    
-}
+//-(void)simulateChangeTargetImageSize
+//{
+//    
+//    //  121.423552,31.203586    31.16946672086699  121.4102669075268
+//    CLLocation *currentLocation = [FMLocationManager sharedManager].currentLocation.location;
+//    
+//    if (currentLocation == nil) {
+//        return;
+//    }
+//    CLLocation *targetLocation  = [[CLLocation alloc]initWithLatitude:31.203586 longitude:121.423552];
+//    // 计算距离
+//    CLLocationDistance meters = [currentLocation distanceFromLocation:targetLocation];
+////    NSLog(@"currentLocation===%@",currentLocation);
+////    NSLog(@"meters===%f",meters);
+//    
+//    
+//    
+//    
+//    static float angle = 0.3;
+//    
+//    if (self.tempDistance > meters) {//靠近
+//        
+//        angle += 0.1f;
+//        
+//    }else{//远离
+//        
+//        angle -= 0.1f;
+//    }
+//    
+//    if (angle <= 1.1 && angle > 0.2) {
+//        
+//        CATransform3D scale = CATransform3DMakeScale(angle, angle, 1);
+//        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
+//        
+//        CATransform3D concat = CATransform3DConcat(rotation, scale);
+//        self.targetImage.layer.transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
+//        
+//        [UIView animateWithDuration:1 animations:^{
+//            
+//        } completion:^(BOOL finished) {
+//            
+//            CGPoint center = self.targetImage.center;
+//            center.y += 10;
+//            
+//            self.targetImage .center = center;
+//            
+//        }];
+//    }else if (angle > 1.09)
+//    {
+//        if (self.tapGes == nil) {
+//            
+//            //添加手势
+//            self.tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
+//            
+//            [self.targetImage addGestureRecognizer:self.tapGes];
+//            self.targetImage.userInteractionEnabled = YES;
+//        }
+//    }
+//    self.tempDistance = meters;
+//    
+//}
 
 //模拟位置动画
--(void)diatanceImageFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation
-{
-    
-    static float angle = 0.3;
-    angle += 0.05f;
-    
-    if (angle <= 1.1) {
-        
-        CATransform3D scale = CATransform3DMakeScale(angle, angle, 1);
-        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
-        
-        CATransform3D concat = CATransform3DConcat(rotation, scale);
-        self.targetImage.layer.transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
-        
-        [UIView animateWithDuration:1 animations:^{
-            
-        } completion:^(BOOL finished) {
-            
-            CGPoint center = self.targetImage.center;
-            center.y += 10;
-            
-            self.targetImage .center = center;
-            
-        }];
-        
-    }else if (angle > 1.1)
-    {
-        if (self.tapGes == nil) {
-            
-            //添加手势
-            self.tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
-            
-            [self.targetImage addGestureRecognizer:self.tapGes];
-            self.targetImage.userInteractionEnabled = YES;
-        }
-    }
-}
+//-(void)diatanceImageFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation
+//{
+//    
+//    static float angle = 0.3;
+//    angle += 0.05f;
+//    
+//    if (angle <= 1.1) {
+//        
+//        CATransform3D scale = CATransform3DMakeScale(angle, angle, 1);
+//        CATransform3D rotation = CATransform3DMakeRotation(0.1, 0, 0, 0.1);
+//        
+//        CATransform3D concat = CATransform3DConcat(rotation, scale);
+//        self.targetImage.layer.transform = CATransform3DPerspect(concat, CGPointMake(0, 0), 1000);
+//        
+//        [UIView animateWithDuration:1 animations:^{
+//            
+//        } completion:^(BOOL finished) {
+//            
+//            CGPoint center = self.targetImage.center;
+//            center.y += 10;
+//            
+//            self.targetImage .center = center;
+//            
+//        }];
+//        
+//    }else if (angle > 1.1)
+//    {
+//        if (self.tapGes == nil) {
+//            
+//            //添加手势
+//            self.tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handlePinch:)];
+//            
+//            [self.targetImage addGestureRecognizer:self.tapGes];
+//            self.targetImage.userInteractionEnabled = YES;
+//        }
+//    }
+//}
 
 #pragma mark ------ //判断大致的方向问题 ---------
 -(NSInteger)getDirectionFromLocation:(CLLocation *)fromLoaction andTargetLocation:(CLLocation *)TatgetLocation

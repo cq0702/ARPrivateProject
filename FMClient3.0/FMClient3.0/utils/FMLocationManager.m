@@ -230,7 +230,7 @@
     self.direction = direction;
     
     
-    NSLog(@"didUpdateUserHeading：======  %lf==== %lf",d,direction);
+//    NSLog(@"didUpdateUserHeading：======  %lf==== %lf",d,direction);
 //    if(nil != myLocationAnnotationView) {
 //        if (direction > 180)
 //        {
