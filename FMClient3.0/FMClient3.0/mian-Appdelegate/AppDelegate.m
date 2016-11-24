@@ -13,6 +13,12 @@
 #import "FMLocationManager.h"
 #import "LoginViewController.h"
 
+#import "UMSocial.h"
+#import "UMSocialWechatHandler.h"
+#import "UMSocialQQHandler.h"
+#import "UMSocialSinaHandler.h"
+#import "UMSocialSinaSSOHandler.h"
+
 #import "JPUSHService.h"
 #import <AdSupport/AdSupport.h>
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max
@@ -47,6 +53,9 @@
     //开始定位
     [[FMLocationManager sharedManager]startLocationService];
     
+    [self jspushConfigWithOptions:launchOptions];
+    
+    [self initShare];
     
     return YES;
     
@@ -65,28 +74,34 @@
     self.window.rootViewController = tabController;
 
 }
+- (void)initShare
+{
+    MYBaseConfigUtils *cfg = [MYBaseConfigUtils sharedInstance];
+    
+    [UMSocialData setAppKey:[cfg umengKey]];
+    
+    [UMSocialWechatHandler setWXAppId:[cfg wxAppId] appSecret:[cfg wxAppSecret]  url:[cfg wxShareURL]];
+    [UMSocialQQHandler   setQQWithAppId:[cfg qqAppId]  appKey:[cfg qqAppSecret]  url:[cfg wxShareURL]];
+    [UMSocialSinaSSOHandler openNewSinaSSOWithAppKey:[cfg sinaAppkey] secret:[cfg sinaAppSecret] RedirectURL:@"http://sns.whalecloud.com/sina2/callback"];
+    
+    [UMSocialQQHandler   setSupportWebView:YES];
+    
+    [UMSocialSinaHandler openSSOWithRedirectURL:@"http://sns.whalecloud.com/sina2/callback"];
+    
+}
 #pragma mark -----  显示主界面  --------
 -(void)configRootViewController
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     NSString* token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
-    if (token.length == 0) {
+    if (token.length  == 0) {
         //显示主界面
         MYMaintabcontroller * tabController = [[MYMaintabcontroller alloc] init];
         
-        //    NSString * isShow = [[NSUserDefaults standardUserDefaults] objectForKey:kShowWelcome];
-        //    if(![MYUtils isEmpty:isShow])
-        //    {
-        //        FMAddInfoController * addCtrl = [[FMAddInfoController alloc]init];
-        //       self.window.rootViewController = addCtrl;
-        
-        //    }else{
-        //
-        //  //设置windows根视
         self.window.rootViewController = tabController;
-        //    }
 
     }else{
+        
         LoginViewController *loginVC=[[LoginViewController alloc] init];
         loginVC.title = @"hrapp";
         self.window.rootViewController=[[UINavigationController alloc] initWithRootViewController:loginVC];
@@ -114,13 +129,18 @@
     // 监听设备激活状态
     [[NSNotificationCenter defaultCenter] postNotificationName:kDeviceDidBecomeActive object:nil];
     
-    [BMKMapView didForeGround];//当应用恢复前台状态时调用，回复地图的渲染和opengl相关的操作
+//    [BMKMapView didForeGround];//当应用恢复前台状态时调用，回复地图的渲染和opengl相关的操作
     
+    [UMSocialSnsService  applicationDidBecomeActive];
     
 }
 - (void)applicationWillResignActive:(UIApplication *)application {
     
-    [BMKMapView willBackGround];//当应用即将后台时调用，停止一切调用opengl相关的操作
+//    [BMKMapView willBackGround];//当应用即将后台时调用，停止一切调用opengl相关的操作
+}
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
+    return  [UMSocialSnsService handleOpenURL:url];
 }
 
 - (void)jspushConfigWithOptions:(NSDictionary *)launchOptions
@@ -170,6 +190,20 @@
     
     /// Required - 注册 DeviceToken
     [JPUSHService registerDeviceToken:deviceToken];
+    
+    
+    [JPUSHService registrationIDCompletionHandler:^(int resCode, NSString *registrationID) {
+        NSLog(@"registrationID=====%@",registrationID);
+        
+//        self.registID = registrationID;
+        
+//        [[NSUserDefaults standardUserDefaults]setObject:registrationID forKey:@"registrationID"];
+//        [[NSUserDefaults standardUserDefaults]synchronize];
+        
+        
+        
+    }];
+    
 }
 -(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error{
     NSLog(@"did Fail To Register For Remote Notifications With Error: %@", error);

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>path</key>
+	<string>e_PathService.svc</string>
+	<key>host</key>
+	<string>10.0.52.219:1592</string>
+	<key>appKey</key>
+	<string>fd7728895d464dc89b0735cb3d565ce2</string>
+	<key>secretKey</key>
+	<string>8ad72ece52ba445ba365b75f46ef2a42</string>
+	<key>umengKey</key>
+	<string>56c5d6d167e58e892a001e6f</string>
+	<key>baiduMapKey</key>
+	<string>DG31Z9GTklDaSPRUGN1hKNkSUeEu2bTM</string>
+	<key>wxShareURL</key>
+	<string>http://www.baidu.com</string>
+	<key>wxAppId</key>
+	<string>wx75fe9ac7df6b7f69</string>
+	<key>wxAppSecret</key>
+	<string>c7f8be22e77160607973017828a41c04</string>
+	<key>wxPartinerid</key>
+	<string>412fde4e9c2e2bb619514ecea142e123</string>
+	<key>wxMchid</key>
+	<string>1263699901</string>
+	<key>alipayScheme</key>
+	<string>Alif4b33fad3b46446a83806675e464988c</string>
+	<key>qqAppId</key>
+	<string>1105836128</string>
+	<key>qqAppSecret</key>
+	<string>db6EOBxSR2sHQqpZ</string>
+	<key>sinaAppkey</key>
+	<string>3928551006</string>
+	<key>sinaAppSecret</key>
+	<string>f585e7ea8c3861ad1b18bac45fca4daa</string>
+</dict>
+</plist>
