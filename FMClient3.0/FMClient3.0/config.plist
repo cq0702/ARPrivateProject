@@ -19,7 +19,7 @@
 	<key>wxAppId</key>
 	<string>wx75fe9ac7df6b7f69</string>
 	<key>wxAppSecret</key>
-	<string>c7f8be22e77160607973017828a41c04</string>
+	<string>1f55ea7ac13788a4fde3af2e8b03153f</string>
 	<key>wxPartinerid</key>
 	<string>412fde4e9c2e2bb619514ecea142e123</string>
 	<key>wxMchid</key>
@@ -27,9 +27,9 @@
 	<key>alipayScheme</key>
 	<string>Alif4b33fad3b46446a83806675e464988c</string>
 	<key>qqAppId</key>
-	<string>1105836128</string>
+	<string>1105762639</string>
 	<key>qqAppSecret</key>
-	<string>db6EOBxSR2sHQqpZ</string>
+	<string>aB2qD2TKmnGIpZlR</string>
 	<key>sinaAppkey</key>
 	<string>3928551006</string>
 	<key>sinaAppSecret</key>

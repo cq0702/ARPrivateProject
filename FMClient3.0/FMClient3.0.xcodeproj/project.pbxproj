@@ -1207,6 +1207,8 @@
 				TargetAttributes = {
 					7ACF31461D61B6470028577A = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 298WESJ6U3;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1614,6 +1616,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = FMClient3.0/FMClient3.0.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: YIMIN SHI (X7646A3767)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 298WESJ6U3;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1669,7 +1673,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.arrProject.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7d1798bc-4fd1-429d-babf-109f55b0a5ad";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/FMClient3.0/lib/jpush-ios-2.2.0.a\"";
 			};
@@ -1683,6 +1688,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = FMClient3.0/FMClient3.0.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: YIMIN SHI (X7646A3767)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 298WESJ6U3;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1738,7 +1745,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = cn.arrProject.test;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "7d1798bc-4fd1-429d-babf-109f55b0a5ad";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				USER_HEADER_SEARCH_PATHS = "\"$(SRCROOT)/FMClient3.0/lib/jpush-ios-2.2.0.a\"";
 			};
