@@ -104,7 +104,7 @@
                 <constraint firstItem="bAJ-61-V8D" firstAttribute="top" secondItem="dzo-eT-BC3" secondAttribute="bottom" constant="20" id="yf6-gp-hjs"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-116" y="-161"/>
+            <point key="canvasLocation" x="-336" y="-195"/>
         </view>
     </objects>
     <resources>

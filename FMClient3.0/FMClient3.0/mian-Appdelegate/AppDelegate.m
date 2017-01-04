@@ -27,8 +27,8 @@
 
 #define UMENGKEY @"58339bef1c5dd01208000496"
 #define BAIDUKEY @"HQ6XUijIs4wlsn5usftDGzisAc0CagY6"
-#define JPUSHKEY @"0afde7804ad9163a1df4ae23"
-#define JPUSHMasterKey @"c2c52dba6bcbe3e128cf22db"
+#define JPUSHKEY @"36180b66869509de63cedd87"
+#define JPUSHMasterKey @"e7b1cf9173759a5be4e7d5d0"
 
 @interface AppDelegate ()<JPUSHRegisterDelegate>
 
@@ -94,7 +94,7 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     NSString* token = [[NSUserDefaults standardUserDefaults] objectForKey:@"token"];
-    if (token.length  > 0) {
+    if (token.length  == 0) {
         //显示主界面
         MYMaintabcontroller * tabController = [[MYMaintabcontroller alloc] init];
         

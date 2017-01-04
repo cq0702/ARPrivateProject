@@ -28,7 +28,7 @@
 }
 - (void)monitorTextfieldChange:(NSNotification *)notic
 {
-    if(_phoneNumber.text.length > 11){
+    if(_phoneNumber.text.length != 11){
         
         [[iToast makeText:@"手机号不正确 ！"] show];
     }

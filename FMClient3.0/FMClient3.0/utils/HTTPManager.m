@@ -20,6 +20,10 @@
 @property (nonatomic,strong)AFHTTPSessionManager * sessManager;
 @property (nonatomic,strong)__block AFNetworkReachabilityManager *netStatusManager;
 
+
+@property(nonatomic,assign)BOOL  openHttpsSSL;
+@property(nonatomic,strong)NSString * certificate;
+
 @end
 
 @implementation HTTPManager
@@ -37,6 +41,14 @@
         
     });
     return _sharedObject;
+}
+-(MYBaseConfigUtils *)cfg
+{
+    if (!_cfg) {
+        _cfg = [MYBaseConfigUtils sharedInstance];
+    }
+    return _cfg;
+    
 }
 // 懒加载
 - (AFHTTPSessionManager *)sessManager {
@@ -70,14 +82,7 @@
     return  url;
 }
 
--(MYBaseConfigUtils *)cfg
-{
-    if (!_cfg) {
-        _cfg = [MYBaseConfigUtils sharedInstance];
-    }
-    return _cfg;
 
-}
 #pragma mark ----- 统一方法  -------
 -(void)requestWithAPI:(NSString *)api dictionary:(NSMutableDictionary *)params success:(success)success  failure:(failure)failure
 {
@@ -100,7 +105,7 @@
 - (void)thirdPostWithAPI:(NSString *)api dictionary:(NSMutableDictionary *)params success:(success)success failure:(failure)failure
 {
     
-    [self.sessManager POST:[self getBaseUrlWithUrlString:api] parameters:params progress:^(NSProgress * _Nonnull uploadProgress) {
+    [self.sessManager POST:api parameters:params progress:^(NSProgress * _Nonnull uploadProgress) {
         
         NSLog(@"当前post请求进度为:%lf", 1.0 * uploadProgress.completedUnitCount / uploadProgress.totalUnitCount);
         
@@ -254,7 +259,7 @@
 -(void)getMailCodeWithAPI:(NSString *)api  dictionary:(NSMutableDictionary *)params success:(success)success  failure:(failure)failure{
     
     NSString * url = [self getBaseUrlWithUrlString:api];
-    [self.sessManager GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+    [self.sessManager GET:api parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
         
         NSLog(@"当前get请求进度为:%lf", 1.0 * downloadProgress.completedUnitCount / downloadProgress.totalUnitCount);
         
@@ -474,11 +479,55 @@
     }];
 }
 
+#pragma mark --------  HTTPS ----------
+- (void)HttpsGet:(NSString *)url params:(NSDictionary *)params success:(void (^)(id))success failure:(void (^)(NSError *))failure {
+    // 1.获得请求管理者
+    AFHTTPSessionManager *mgr = [AFHTTPSessionManager manager];
+    // 2.申明返回的结果是text/html类型
+    mgr.responseSerializer = [AFHTTPResponseSerializer serializer];
+    // 3.设置超时时间为10s
+    mgr.requestSerializer.timeoutInterval = 10;
+    
+    // 加上这行代码，https ssl 验证。
+    if(_openHttpsSSL) {
+        [mgr setSecurityPolicy:[self customSecurityPolicy]];
+    }
+    
+    [mgr GET:url parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
+        
+    } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        
+    }];
+}
+
+- (AFSecurityPolicy*)customSecurityPolicy {
+    // /先导入证书
+    NSString *cerPath = [[NSBundle mainBundle] pathForResource:_certificate ofType:@"cer"];//证书的路径
+    NSData *certData = [NSData dataWithContentsOfFile:cerPath];
+    
+    // AFSSLPinningModeCertificate 使用证书验证模式
+    AFSecurityPolicy *securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeCertificate];
+    
+    // allowInvalidCertificates 是否允许无效证书（也就是自建的证书），默认为NO
+    // 如果是需要验证自建证书，需要设置为YES
+    securityPolicy.allowInvalidCertificates = YES;
+    
+    //validatesDomainName 是否需要验证域名，默认为YES；
+    //假如证书的域名与你请求的域名不一致，需把该项设置为NO；如设成NO的话，即服务器使用其他可信任机构颁发的证书，也可以建立连接，这个非常危险，建议打开。
+    //置为NO，主要用于这种情况：客户端请求的是子域名，而证书上的是另外一个域名。因为SSL证书上的域名是独立的，假如证书上注册的域名是www.google.com，那么mail.google.com是无法验证通过的；当然，有钱可以注册通配符的域名*.google.com，但这个还是比较贵的。
+    //如置为NO，建议自己添加对应域名的校验逻辑。
+    securityPolicy.validatesDomainName = NO;
+    
+    securityPolicy.pinnedCertificates = @[certData];
+    
+    return securityPolicy;
+}
 #pragma mark --------  获取网络状态 ----------
 
 - (void)startCheckNetStatus
 {
-    
     [self checkAFNetworkStatus];
 }
 

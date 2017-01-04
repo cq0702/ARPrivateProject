@@ -7,6 +7,7 @@
 //
 
 #import "HomeViewController.h"
+#import "LoginViewController.h"
 
 @interface HomeViewController ()
 
@@ -19,6 +20,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
+    NSString * phone = [self userDefaultsForKey:UD_LOGIN_TOKEN];
+//    if ([MYUtils isEmpty:phone]) {
+//        LoginViewController * login = [[LoginViewController alloc]initWithNibName:@"LoginViewController" bundle:nil];
+//        
+//        [self.navigationController pushViewController:login animated:YES];
+//        
+//    }
 
 }
 -(void)hideTheTabbar
